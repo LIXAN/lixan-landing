@@ -1,0 +1,28 @@
+{
+  "name": "Lixan — Automatizaciones y Diseño Web",
+  "short_name": "Lixan",
+  "description": "Agencia de automatizaciones con N8N/Make y diseño web en Astro para empresas latinoamericanas.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#08070f",
+  "theme_color": "#6d3df7",
+  "lang": "es-CO",
+  "icons": [
+    {
+      "src": "/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

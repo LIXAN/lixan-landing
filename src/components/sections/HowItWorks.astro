@@ -1,0 +1,111 @@
+---
+/**
+ * HowItWorks.astro
+ * Step-by-step process section. Shows clients how working with Lixan looks.
+ * Reduces friction and objections before the CTA.
+ */
+
+const steps = [
+  {
+    number: '01',
+    title: 'Diagnóstico',
+    description:
+      'Una llamada de 30 minutos para entender tu negocio, tus herramientas y el problema que queremos resolver. Sin demos de ventas ni cuestionarios interminables.',
+    icon: '🎯',
+  },
+  {
+    number: '02',
+    title: 'Propuesta',
+    description:
+      'En 48 horas recibes una propuesta con alcance, entregables y precio fijo. Sabes exactamente qué vas a recibir antes de comprometerte con nada.',
+    icon: '💡',
+  },
+  {
+    number: '03',
+    title: 'Construcción',
+    description:
+      'Desarrollamos con actualizaciones semanales reales. Tienes visibilidad del avance, no un informe cada dos semanas que dice "en progreso".',
+    icon: '⚡',
+  },
+  {
+    number: '04',
+    title: 'Entrega y soporte',
+    description:
+      'Documentamos todo y hacemos el traspaso contigo. Incluye 30 días de garantía para ajustes y correcciones post-lanzamiento.',
+    icon: '🏆',
+  },
+];
+---
+
+<section id="proceso" class="py-24 md:py-32 relative overflow-hidden" aria-labelledby="how-heading">
+  <!-- Background decoration -->
+  <div aria-hidden="true" class="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-electric-500/10 blur-[100px]"></div>
+
+  <div class="container-lixan relative z-10">
+
+    <!-- ── Section header ── -->
+    <div class="text-center mb-16" data-animate>
+      <span class="inline-block text-electric-400 text-sm font-semibold uppercase tracking-widest mb-3">
+        Cómo trabajamos
+      </span>
+      <h2 id="how-heading" class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4">
+        De la llamada al lanzamiento, <span class="gradient-text">sin sorpresas</span>
+      </h2>
+      <p class="text-text-secondary max-w-xl mx-auto text-lg">
+        Cuatro pasos. Sabes qué esperar en cada uno.
+      </p>
+    </div>
+
+    <!-- ── Steps ── -->
+    <div class="relative">
+      <!-- Vertical line connector (desktop) -->
+      <div
+        aria-hidden="true"
+        class="hidden md:block absolute left-1/2 top-8 bottom-8 w-px bg-gradient-to-b from-brand-500/0 via-brand-500/30 to-brand-500/0 -translate-x-1/2"
+      ></div>
+
+      <div class="space-y-8 md:space-y-0">
+        {steps.map((step, i) => (
+          <div
+            class={`md:grid md:grid-cols-2 md:gap-12 items-center ${
+              i % 2 === 0 ? '' : 'md:[&>*:first-child]:order-last'
+            }`}
+          >
+            <!-- Content card -->
+            <div
+              data-animate={i % 2 === 0 ? 'left' : 'right'}
+              style={`--ad: ${i * 100}ms`}
+              class={`group p-8 rounded-brand border border-surface-700 bg-surface-900 hover:border-brand-500/40 transition-all duration-300 hover:-translate-y-1 ${
+                i % 2 === 0 ? 'md:text-right' : 'md:text-left'
+              }`}
+            >
+              <span class="text-5xl mb-4 block" aria-hidden="true">{step.icon}</span>
+              <h3 class="text-xl font-bold text-text-primary mb-3">{step.title}</h3>
+              <p class="text-text-secondary text-sm leading-relaxed">{step.description}</p>
+            </div>
+
+            <!-- Step number (center) -->
+            <div class="hidden md:flex justify-center items-center">
+              <div class="w-14 h-14 rounded-full bg-surface-800 border-2 border-brand-500/60 flex items-center justify-center text-brand-400 font-extrabold text-sm shadow-lg shadow-brand-500/20">
+                {step.number}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- ── Bottom CTA ── -->
+    <div class="text-center mt-16">
+      <a
+        href="#agendar"
+        class="inline-flex items-center gap-2 px-8 py-4 rounded-pill bg-brand-500 hover:bg-brand-400 text-white font-semibold text-base transition-all duration-200 shadow-lg shadow-brand-500/30 hover:-translate-y-0.5"
+      >
+        Agendar llamada gratis
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>

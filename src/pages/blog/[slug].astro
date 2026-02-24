@@ -1,0 +1,94 @@
+---
+/**
+ * blog/[slug].astro — Individual blog post page
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Navbar from '../../components/layout/Navbar.astro';
+import Footer from '../../components/layout/Footer.astro';
+import { getAllPosts, getPostBySlug } from '../../lib/sanity';
+import type { SanityPost } from '../../lib/sanity';
+
+// Generate static paths for all posts
+export async function getStaticPaths() {
+  try {
+    const posts = await getAllPosts();
+    return posts.map((post) => ({
+      params: { slug: post.slug.current },
+      props: { post },
+    }));
+  } catch {
+    return [];
+  }
+}
+
+interface Props {
+  post: SanityPost;
+}
+
+// Load post — either from getStaticPaths props or fresh fetch
+let post: SanityPost | null = Astro.props.post ?? null;
+const { slug } = Astro.params;
+
+if (!post && slug) {
+  try {
+    post = await getPostBySlug(slug);
+  } catch {
+    // Sanity not configured
+  }
+}
+
+// Return 404 if not found
+if (!post) {
+  return Astro.redirect('/blog');
+}
+---
+
+<BaseLayout
+  title={post.title}
+  description={post.excerpt}
+  isArticle={true}
+  publishedAt={post.publishedAt}
+>
+  <Navbar />
+
+  <main class="pt-24 pb-32">
+    <article class="container-lixan max-w-2xl mx-auto">
+
+      <!-- ── Back link ── -->
+      <a href="/blog" class="inline-flex items-center gap-1 text-sm text-text-muted hover:text-text-primary transition-colors mb-8">
+        ← Volver al blog
+      </a>
+
+      <!-- ── Post header ── -->
+      <header class="mb-10">
+        <time
+          datetime={post.publishedAt}
+          class="text-xs text-text-muted"
+        >
+          {new Date(post.publishedAt).toLocaleDateString('es-ES', {
+            year: 'numeric', month: 'long', day: 'numeric',
+          })}
+        </time>
+        <h1 class="text-3xl sm:text-4xl font-extrabold mt-3 mb-4">{post.title}</h1>
+        {post.author && (
+          <p class="text-sm text-text-secondary">Por {post.author}</p>
+        )}
+      </header>
+
+      <!-- ── Cover image ── -->
+      <!-- TODO: render real image with urlFor(post.coverImage).width(800).url() -->
+      <div class="w-full h-56 md:h-72 bg-gradient-to-br from-surface-800 to-brand-950/40 rounded-brand mb-10"></div>
+
+      <!-- ── Content ── -->
+      <!-- TODO: render Portable Text blocks with a compatible renderer -->
+      <!-- Recommended: @portabletext/react or sanity-astro -->
+      <div class="prose prose-invert max-w-none text-text-secondary">
+        <p class="text-text-muted italic">
+          [Contenido del artículo — renderizar Portable Text de Sanity aquí]
+        </p>
+      </div>
+    </article>
+  </main>
+
+  <Footer />
+</BaseLayout>

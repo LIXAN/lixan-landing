@@ -1,0 +1,143 @@
+---
+/**
+ * casos/[slug].astro — Individual case study detail page
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Navbar from '../../components/layout/Navbar.astro';
+import Footer from '../../components/layout/Footer.astro';
+import Badge from '../../components/ui/Badge.astro';
+import { getAllCaseStudies, getCaseStudyBySlug } from '../../lib/sanity';
+import type { SanityCaseStudy } from '../../lib/sanity';
+
+export async function getStaticPaths() {
+  try {
+    const cases = await getAllCaseStudies();
+    return cases.map((c) => ({
+      params: { slug: c.slug.current },
+      props: { caseStudy: c },
+    }));
+  } catch {
+    return [];
+  }
+}
+
+interface Props {
+  caseStudy: SanityCaseStudy;
+}
+
+let caseStudy: SanityCaseStudy | null = Astro.props.caseStudy ?? null;
+const { slug } = Astro.params;
+
+if (!caseStudy && slug) {
+  try {
+    caseStudy = await getCaseStudyBySlug(slug);
+  } catch {
+    // Sanity not configured
+  }
+}
+
+if (!caseStudy) {
+  return Astro.redirect('/');
+}
+
+const industryLabels: Record<string, string> = {
+  ecommerce: 'E-commerce', saas: 'SaaS', healthcare: 'Salud',
+  finance: 'Finanzas', realestate: 'Inmobiliaria', education: 'Educación',
+  marketing: 'Marketing', other: 'Tecnología',
+};
+
+const siteUrl = import.meta.env.PUBLIC_SITE_URL ?? 'https://lixan.co';
+const caseUrl = `${siteUrl}/casos/${caseStudy.slug.current}`;
+
+const caseSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: caseStudy.title,
+  description: `Caso de éxito: ${caseStudy.client}. ${(caseStudy.results ?? []).join(' · ')}`,
+  url: caseUrl,
+  author: { '@type': 'Organization', name: 'Lixan', url: siteUrl },
+  inLanguage: 'es-CO',
+};
+---
+
+<BaseLayout
+  title={`${caseStudy.title} — Caso de éxito`}
+  description={`Descubre cómo ayudamos a ${caseStudy.client} a alcanzar resultados extraordinarios.`}
+>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(caseSchema)} />
+
+  <Navbar />
+
+  <main class="pt-24 pb-32">
+    <div class="container-lixan max-w-3xl mx-auto">
+
+      <!-- ── Back ── -->
+      <a href="/#casos" class="inline-flex items-center gap-1 text-sm text-text-muted hover:text-text-primary transition-colors mb-8">
+        ← Volver a casos
+      </a>
+
+      <!-- ── Header ── -->
+      <header class="mb-10">
+        <div class="flex flex-wrap gap-2 mb-4">
+          <Badge variant="accent">{caseStudy.client}</Badge>
+          {caseStudy.industry && (
+            <Badge variant="default">{industryLabels[caseStudy.industry] ?? caseStudy.industry}</Badge>
+          )}
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold mb-4">{caseStudy.title}</h1>
+      </header>
+
+      <!-- ── Cover image placeholder ── -->
+      <div class="w-full h-64 bg-gradient-to-br from-surface-800 to-brand-950/40 rounded-brand mb-10"></div>
+
+      <!-- ── Results highlight ── -->
+      {caseStudy.results && caseStudy.results.length > 0 && (
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">
+          {caseStudy.results.map((result) => (
+            <div class="p-5 rounded-brand border border-brand-500/30 bg-brand-500/5 text-center">
+              <p class="text-sm font-semibold text-brand-300">{result}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <!-- ── Challenge & Solution ── -->
+      <div class="space-y-8">
+        <section aria-labelledby="challenge-heading">
+          <h2 id="challenge-heading" class="text-xl font-bold mb-3">El desafío</h2>
+          <p class="text-text-secondary leading-relaxed">{caseStudy.challenge}</p>
+        </section>
+
+        <section aria-labelledby="solution-heading">
+          <h2 id="solution-heading" class="text-xl font-bold mb-3">Nuestra solución</h2>
+          <p class="text-text-secondary leading-relaxed">{caseStudy.solution}</p>
+        </section>
+
+        {caseStudy.services && caseStudy.services.length > 0 && (
+          <section aria-labelledby="services-heading">
+            <h2 id="services-heading" class="text-xl font-bold mb-3">Servicios entregados</h2>
+            <div class="flex flex-wrap gap-2">
+              {caseStudy.services.map((s) => (
+                <Badge variant="outline">{s}</Badge>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+
+      <!-- ── CTA ── -->
+      <div class="mt-16 p-8 rounded-brand border border-surface-700 bg-surface-900 text-center">
+        <p class="text-lg font-semibold mb-2">¿Quieres resultados similares?</p>
+        <p class="text-text-secondary text-sm mb-6">Cuéntanos tu proyecto y diseñamos una solución a medida.</p>
+        <a
+          href="/#contacto"
+          class="inline-flex items-center gap-2 px-8 py-4 rounded-pill bg-brand-500 hover:bg-brand-400 text-white font-semibold transition-all duration-200 shadow-lg shadow-brand-500/30"
+        >
+          Hablemos →
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

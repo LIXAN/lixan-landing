@@ -1,0 +1,134 @@
+---
+/**
+ * Footer.astro
+ * Site footer with links, social icons and legal copy.
+ */
+const currentYear = new Date().getFullYear();
+
+const footerLinks = {
+  company: [
+    { label: 'Casos de éxito', href: '/casos' },
+    { label: 'Blog', href: '/blog' },
+    { label: 'Contacto', href: '#contacto' },
+  ],
+  services: [
+    { label: 'Landing Pages', href: '#servicios' },
+    { label: 'Sitios Web', href: '#servicios' },
+    { label: 'Automatizaciones', href: '#servicios' },
+    { label: 'IA & Chatbots', href: '#servicios' },
+  ],
+  legal: [
+    { label: 'Política de privacidad', href: '/privacidad' },
+    { label: 'Términos de uso', href: '/terminos' },
+  ],
+};
+
+const socialLinks = [
+  {
+    label: 'Instagram',
+    href: 'https://www.instagram.com/lixan_col/',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>`,
+  },
+  {
+    label: 'Facebook',
+    href: 'https://www.facebook.com/share/17yAJkLj59/',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`,
+  },
+];
+---
+
+<footer class="border-t border-surface-700 bg-surface-950">
+  <div class="container-lixan py-16">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+
+      <!-- ── Brand column ── -->
+      <div class="lg:col-span-1">
+        <a href="/" class="inline-block mb-4" aria-label="Lixan — Ir al inicio">
+          <img
+            src="/images/LixanLogo.svg"
+            alt="Lixan"
+            width="110"
+            height="32"
+            loading="lazy"
+            class="h-8 w-auto"
+          />
+        </a>
+        <p class="text-sm text-text-muted leading-relaxed max-w-xs">
+          Automatizaciones y diseño web para equipos que quieren crecer sin depender de procesos manuales.
+        </p>
+        <!-- Social links -->
+        <div class="flex gap-3 mt-6">
+          {socialLinks.map((s) => (
+            <a
+              href={s.href}
+              aria-label={s.label}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-800 text-text-muted hover:bg-brand-500 hover:text-white transition-colors duration-200"
+              set:html={s.icon}
+            />
+          ))}
+        </div>
+      </div>
+
+      <!-- ── Company links ── -->
+      <div>
+        <h3 class="text-sm font-semibold text-text-primary uppercase tracking-widest mb-4">Empresa</h3>
+        <ul class="space-y-2">
+          {footerLinks.company.map((link) => (
+            <li>
+              <a href={link.href} class="text-sm text-text-muted hover:text-text-primary transition-colors">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- ── Services links ── -->
+      <div>
+        <h3 class="text-sm font-semibold text-text-primary uppercase tracking-widest mb-4">Servicios</h3>
+        <ul class="space-y-2">
+          {footerLinks.services.map((link) => (
+            <li>
+              <a href={link.href} class="text-sm text-text-muted hover:text-text-primary transition-colors">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- ── Contact column ── -->
+      <div>
+        <h3 class="text-sm font-semibold text-text-primary uppercase tracking-widest mb-4">Contacto</h3>
+        <ul class="space-y-3 text-sm text-text-muted">
+          <li>
+            <!-- TODO: replace with real email from siteConfig -->
+            <a href="mailto:hola@lixantech.com" class="hover:text-brand-400 transition-colors">
+              hola@lixantech.com
+            </a>
+          </li>
+          <li>
+            <!-- TODO: replace with WhatsApp from siteConfig -->
+            <a href="https://wa.me/573124843933" class="hover:text-brand-400 transition-colors" target="_blank" rel="noopener noreferrer">
+              WhatsApp
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── Bottom bar ── -->
+    <div class="mt-12 pt-6 border-t border-surface-700 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-text-muted">
+      <p>© {currentYear} Lixan. Todos los derechos reservados.</p>
+      <div class="flex gap-4">
+        {footerLinks.legal.map((link) => (
+          <a href={link.href} class="hover:text-text-primary transition-colors">
+            {link.label}
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,109 @@
+---
+/**
+ * index.astro — Homepage / Landing Page
+ * Conversion-optimized section order:
+ *   Navbar → Hero → Services → HowItWorks → CaseStudies → Testimonials → FAQ → ContactForm → Footer
+ */
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/layout/Navbar.astro';
+import Footer from '../components/layout/Footer.astro';
+
+// Sections (order matters for conversion flow)
+import Hero from '../components/sections/Hero.astro';
+import Services from '../components/sections/Services.astro';
+import HowItWorks from '../components/sections/HowItWorks.astro';
+import CaseStudies from '../components/sections/CaseStudies.astro';
+import Testimonials from '../components/sections/Testimonials.astro';
+import FAQ from '../components/sections/FAQ.astro';
+
+// React islands — loaded on the client
+import ContactForm from '../components/sections/ContactForm';
+import CalBooking from '../components/sections/CalBooking';
+---
+
+<BaseLayout
+  title="Home"
+  description="Automatizaciones con N8N/Make y sitios web en Astro que capturan leads y procesan tareas sin trabajo manual. Precio fijo, entrega garantizada."
+>
+  <!-- ─── Navigation ─── -->
+  <Navbar />
+
+  <main id="main-content">
+    <!-- ─── 1. Hero — Captura atención y comunica propuesta de valor ─── -->
+    <Hero />
+
+    <!-- ─── 2. Services — Qué ofrecemos ─── -->
+    <Services />
+
+    <!-- ─── 3. How It Works — Reduce fricción al explicar el proceso ─── -->
+    <HowItWorks />
+
+    <!-- ─── 4. Case Studies — Prueba social con resultados reales ─── -->
+    <CaseStudies />
+
+    <!-- ─── 5. Testimonials — Confianza adicional antes del CTA final ─── -->
+    <Testimonials />
+
+    <!-- ─── 6. FAQ — Elimina objeciones finales ─── -->
+    <FAQ />
+
+    <!-- ─── 7. Booking — Cal.com inline calendar ─── -->
+    <section id="agendar" class="py-24 md:py-32 relative" aria-labelledby="booking-heading">
+      <div aria-hidden="true" class="pointer-events-none absolute inset-0">
+        <div class="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-brand-500/10 blur-[100px]"></div>
+      </div>
+
+      <div class="container-lixan relative z-10">
+        <div class="text-center mb-12">
+          <span class="inline-block text-brand-400 text-sm font-semibold uppercase tracking-widest mb-3">
+            Agenda tu llamada
+          </span>
+          <h2 id="booking-heading" class="text-3xl sm:text-4xl font-extrabold mb-4">
+            30 minutos, <span class="gradient-text">sin compromiso</span>
+          </h2>
+          <p class="text-text-secondary max-w-md mx-auto">
+            Una conversación para entender tu situación y ver si encajamos. Sin demo de ventas, sin presión.
+          </p>
+        </div>
+
+        <!-- Cal.com inline embed — React island -->
+        <div class="max-w-4xl mx-auto">
+          <CalBooking mode="inline" client:load />
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 8. Contact Form — CTA final de conversión ─── -->
+    <section id="contacto" class="py-24 md:py-32 relative" aria-labelledby="contact-heading">
+      <!-- Background glow -->
+      <div aria-hidden="true" class="pointer-events-none absolute inset-0">
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[400px] rounded-full bg-brand-500/15 blur-[100px]"></div>
+      </div>
+
+      <div class="container-lixan relative z-10">
+        <div class="max-w-xl mx-auto">
+          <!-- Header -->
+          <div class="text-center mb-10">
+            <span class="inline-block text-brand-400 text-sm font-semibold uppercase tracking-widest mb-3">
+              Contacto
+            </span>
+            <h2 id="contact-heading" class="text-3xl sm:text-4xl font-extrabold mb-4">
+              ¿Tienes un proyecto <span class="gradient-text">en mente?</span>
+            </h2>
+            <p class="text-text-secondary">
+              Cuéntanos qué necesitas. En menos de 24 horas te decimos con honestidad si podemos ayudarte y cómo.
+            </p>
+          </div>
+
+          <!-- React island: loads on client -->
+          <ContactForm client:load />
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ─── Footer ─── -->
+  <Footer />
+</BaseLayout>

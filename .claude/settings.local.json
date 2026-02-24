@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e:*)",
+      "Bash(npx astro check)",
+      "Bash(timeout 15 npm run dev)",
+      "Bash(npm run dev:*)",
+      "Bash(grep:*)",
+      "Bash(timeout 12 npm run dev:*)",
+      "Bash(tasklist:*)",
+      "Bash(curl:*)"
+    ]
+  }
+}

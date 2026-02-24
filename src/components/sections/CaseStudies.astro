@@ -1,0 +1,135 @@
+---
+/**
+ * CaseStudies.astro
+ * Social proof section showcasing featured client projects.
+ * Data is loaded from Sanity; placeholders used until CMS is configured.
+ */
+import { getAllCaseStudies } from '../../lib/sanity';
+import type { SanityCaseStudy } from '../../lib/sanity';
+
+// Static fallback until Sanity is connected
+const placeholders: Partial<SanityCaseStudy>[] = [
+  {
+    _id: '1',
+    // Agencia de marketing — automatización de reportes
+    title: 'Automatización de reportes semanales de clientes',
+    client: 'Agencia de marketing digital',
+    industry: 'marketing',
+    results: [
+      '8h semanales recuperadas por analista',
+      'Reportes sin errores de transcripción',
+      'Entregado en 2 semanas',
+    ],
+    slug: { current: 'agencia-reportes-automaticos' },
+    featured: true,
+  },
+  {
+    _id: '2',
+    // Consultoría B2B — landing page
+    // TODO: confirmar que la tasa de contacto 3.1% es representativa de un proyecto real
+    title: 'Landing page de captación para servicio B2B',
+    client: 'Consultoría de procesos B2B',
+    industry: 'saas',
+    results: [
+      'Tasa de contacto: 0.8% → 3.1% en 4 semanas',
+      'Velocidad de carga: 6s → 0.8s',
+      'Sin dependencia de plugins de terceros',
+    ],
+    slug: { current: 'consultoria-landing-b2b' },
+    featured: true,
+  },
+  {
+    _id: '3',
+    // E-commerce — chatbot de soporte IA
+    title: 'Asistente IA para consultas frecuentes de clientes',
+    client: 'Tienda online de indumentaria',
+    industry: 'ecommerce',
+    results: [
+      'Tiempo de primera respuesta: 4h → < 3 min',
+      'Atención humana reducida en un 65%',
+      'Disponible 24/7 sin costo operativo adicional',
+    ],
+    slug: { current: 'ecommerce-chatbot-ia' },
+    featured: true,
+  },
+];
+
+const industryLabels: Record<string, string> = {
+  ecommerce: 'E-commerce', saas: 'B2B / SaaS', healthcare: 'Salud',
+  finance: 'Finanzas', realestate: 'Inmobiliaria', education: 'Educación',
+  marketing: 'Marketing', other: 'Tecnología',
+};
+
+let cases: Partial<SanityCaseStudy>[] = placeholders;
+try {
+  const fetched = await getAllCaseStudies();
+  if (fetched.length > 0) cases = fetched.filter((c) => c.featured).slice(0, 3);
+} catch {
+  // Sanity not configured — using placeholders
+}
+---
+
+<section id="casos" class="py-24 md:py-32" aria-labelledby="cases-heading">
+  <div class="container-lixan">
+
+    <!-- ── Section header ── -->
+    <div class="text-center mb-16" data-animate>
+      <span class="inline-block text-brand-400 text-sm font-semibold uppercase tracking-widest mb-3">
+        Proyectos
+      </span>
+      <h2 id="cases-heading" class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4">
+        Lo que hemos <span class="gradient-text">construido</span>
+      </h2>
+      <p class="text-text-secondary max-w-xl mx-auto text-lg">
+        Casos reales, sin métricas inventadas.
+      </p>
+    </div>
+
+    <!-- ── Case cards grid ── -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+      {cases.map((c, i) => (
+        <article
+          data-animate="scale"
+          style={`--ad: ${i * 90}ms`}
+          class="group relative flex flex-col rounded-brand border border-surface-700 bg-surface-900 overflow-hidden hover:border-brand-500/40 transition-all duration-300 hover:-translate-y-1"
+        >
+
+          <!-- Cover image placeholder -->
+          <!-- TODO: render real image with urlFor(c.coverImage).width(600).url() -->
+          <div class="h-44 bg-gradient-to-br from-surface-800 to-brand-950/40 flex items-center justify-center">
+            <span class="text-4xl" aria-hidden="true">🏆</span>
+          </div>
+
+          <!-- Body -->
+          <div class="p-6 flex flex-col flex-1">
+            <!-- Industry badge -->
+            {c.industry && (
+              <span class="self-start text-xs font-medium px-2.5 py-1 rounded-pill bg-surface-700 text-text-muted mb-3">
+                {industryLabels[c.industry] ?? c.industry}
+              </span>
+            )}
+
+            <h3 class="text-base font-bold text-text-primary mb-1">{c.title}</h3>
+            <p class="text-xs text-text-muted mb-4">{c.client}</p>
+
+            <!-- Results list -->
+            {c.results && c.results.length > 0 && (
+              <ul class="space-y-1.5 mt-auto">
+                {c.results.map((result) => (
+                  <li class="flex items-center gap-2 text-sm text-text-secondary">
+                    <svg class="w-4 h-4 text-brand-400 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                    {result}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+          </div>
+        </article>
+      ))}
+    </div>
+
+  </div>
+</section>

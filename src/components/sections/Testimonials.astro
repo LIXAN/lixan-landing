@@ -1,0 +1,109 @@
+---
+/**
+ * Testimonials.astro
+ * Client quotes section. High-trust social proof near the bottom of the funnel.
+ * Data loaded from Sanity; static fallback included.
+ */
+import { getAllTestimonials } from '../../lib/sanity';
+import type { SanityTestimonial } from '../../lib/sanity';
+
+const placeholders: Partial<SanityTestimonial>[] = [
+  {
+    _id: '1',
+    authorName: 'Carlos M.',
+    role: 'Fundador',
+    company: 'Agencia de Marketing Digital',
+    quote:
+      'Antes del flujo que armaron, mi equipo pasaba los lunes armando reportes a mano. Ahora llegan automáticamente cada semana, bien formateados. Lo pedí, lo recibí, funcionó desde el primer día.',
+    rating: 5,
+    featured: true,
+    order: 1,
+  },
+  {
+    _id: '2',
+    authorName: 'Laura P.',
+    role: 'Directora de Operaciones',
+    company: 'Consultoría B2B',
+    quote:
+      'Propuesta clara, precio fijo, entrega en el plazo acordado. Nuestra web nueva carga en menos de un segundo y la tasa de contacto subió notablemente. Sin sorpresas, que es lo que más valoré.',
+    rating: 5,
+    featured: true,
+    order: 2,
+  },
+  {
+    _id: '3',
+    authorName: 'Sebastián R.',
+    role: 'CEO',
+    company: 'Tienda de Indumentaria Online',
+    quote:
+      'El chatbot resuelve la mayoría de las consultas de nuestros clientes sin que intervenga nadie del equipo. No prometieron milagros — prometieron exactamente lo que hicieron.',
+    rating: 5,
+    featured: true,
+    order: 3,
+  },
+];
+
+let testimonials: Partial<SanityTestimonial>[] = placeholders;
+try {
+  const fetched = await getAllTestimonials(true);
+  if (fetched.length > 0) testimonials = fetched;
+} catch {
+  // Sanity not configured — using placeholders
+}
+
+/** Render star icons based on rating (1–5) */
+function renderStars(rating: number): string {
+  return '★'.repeat(Math.min(5, Math.max(1, rating))) + '☆'.repeat(5 - Math.min(5, rating));
+}
+---
+
+<section id="testimonios" class="py-24 md:py-32 bg-surface-900/40" aria-labelledby="testimonials-heading">
+  <div class="container-lixan">
+
+    <!-- ── Section header ── -->
+    <div class="text-center mb-16" data-animate>
+      <span class="inline-block text-brand-400 text-sm font-semibold uppercase tracking-widest mb-3">
+        Clientes
+      </span>
+      <h2 id="testimonials-heading" class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4">
+        Lo que dicen quienes <span class="gradient-text">ya trabajaron con nosotros</span>
+      </h2>
+    </div>
+
+    <!-- ── Testimonials grid ── -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {testimonials.map((t, i) => (
+        <blockquote
+          data-animate="scale"
+          style={`--ad: ${i * 90}ms`}
+          class="flex flex-col gap-5 p-7 rounded-brand border border-surface-700 bg-surface-900 hover:border-brand-500/30 transition-all duration-300"
+        >
+          <!-- Stars -->
+          <div class="text-brand-400 text-lg tracking-tight" aria-label={`${t.rating ?? 5} estrellas`}>
+            {renderStars(t.rating ?? 5)}
+          </div>
+
+          <!-- Quote text -->
+          <p class="text-text-secondary text-sm leading-relaxed italic flex-1">
+            "{t.quote}"
+          </p>
+
+          <!-- Author -->
+          <footer class="flex items-center gap-3 pt-4 border-t border-surface-700">
+            <!-- Avatar placeholder — TODO: render with urlFor(t.avatar) -->
+            <div
+              class="w-10 h-10 rounded-full bg-gradient-to-br from-brand-500 to-electric-500 flex items-center justify-center text-white font-bold text-sm shrink-0"
+              aria-hidden="true"
+            >
+              {(t.authorName ?? 'A').charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-text-primary">{t.authorName}</p>
+              <p class="text-xs text-text-muted">{t.role} · {t.company}</p>
+            </div>
+          </footer>
+        </blockquote>
+      ))}
+    </div>
+  </div>
+</section>

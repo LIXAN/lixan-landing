@@ -1,0 +1,210 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────
+   Mokoko VF – Lixan display typeface
+   File expected at /public/fonts/Mokoko-VF.woff2
+   Falls back to Georgia, serif if not present.
+   ───────────────────────────────────────────────────────────── */
+@font-face {
+  font-family: 'Mokoko VF';
+  src: url('/fonts/Mokoko-VF.woff2') format('woff2-variations'),
+       url('/fonts/Mokoko-VF.woff') format('woff');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Lixan – Design Tokens
+   Palette: deep dark background + electric violet accent
+   ───────────────────────────────────────────────────────────── */
+@theme {
+  /* ── Lixan brand identity colors (design brief) ── */
+  --color-lixan-purple-light: #A87DD1;
+  --color-lixan-purple:       #7B4CB3;
+  --color-lixan-purple-dark:  #5A3285;
+  --color-lixan-olive-light:  #9AAD1A;
+  --color-lixan-olive:        #7A8C14;
+  --color-lixan-black:        #0C0C0C;
+  --color-lixan-gray-800:     #2A2A2A;
+  --color-lixan-gray-400:     #9E9E9E;
+  --color-border:             #2E2E2E;
+
+  /* ── Display font (headlines / Navbar logo) ── */
+  --font-display: 'Mokoko VF', Georgia, serif;
+
+  /* Brand colours */
+  --color-brand-50:  #f0eeff;
+  --color-brand-100: #e4deff;
+  --color-brand-200: #cdbfff;
+  --color-brand-300: #ab94ff;
+  --color-brand-400: #855dff;  /* primary accent */
+  --color-brand-500: #6d3df7;  /* default */
+  --color-brand-600: #5e24e4;
+  --color-brand-700: #4f1bc0;
+  --color-brand-800: #421a9c;
+  --color-brand-900: #38187d;
+  --color-brand-950: #200d52;
+
+  /* Electric blue (secondary accent) */
+  --color-electric-400: #38bdf8;
+  --color-electric-500: #0ea5e9;
+  --color-electric-600: #0284c7;
+
+  /* Neutral dark surface (custom grays with blue tint) */
+  --color-surface-950: #08070f;  /* page background */
+  --color-surface-900: #0f0d1a;  /* cards */
+  --color-surface-800: #17142a;  /* elevated cards */
+  --color-surface-700: #211d38;  /* borders/dividers */
+  --color-surface-600: #2e2950;  /* hover states */
+
+  /* Text */
+  --color-text-primary:   #f0eeff;
+  --color-text-secondary: #a89ec9;
+  --color-text-muted:     #6b638e;
+
+  /* Typography scale */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  /* Border radius tokens */
+  --radius-brand: 0.75rem;  /* 12px – default card radius */
+  --radius-pill:  9999px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Base styles
+   ───────────────────────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--color-surface-950);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+  }
+
+  /* Smooth focus rings */
+  :focus-visible {
+    outline: 2px solid var(--color-brand-400);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-surface-900);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-surface-600);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-brand-500);
+  }
+
+  /* Selection */
+  ::selection {
+    background-color: var(--color-brand-500);
+    color: #fff;
+  }
+
+  /* Heading defaults */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-text-primary);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Utility classes (project-specific helpers)
+   ───────────────────────────────────────────────────────────── */
+@layer utilities {
+  /* Gradient text helper */
+  .gradient-text {
+    background: linear-gradient(
+      135deg,
+      var(--color-brand-400) 0%,
+      var(--color-electric-400) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Glowing card border */
+  .glow-border {
+    border: 1px solid var(--color-surface-700);
+    box-shadow: 0 0 0 1px var(--color-brand-500) / 0.15,
+                0 0 24px 0 var(--color-brand-500) / 0.08;
+  }
+
+  /* Noise texture overlay (for hero backgrounds) */
+  .noise-overlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  /* Container with max-width and horizontal padding */
+  .container-lixan {
+    width: 100%;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .container-lixan {
+      padding-inline: 2.5rem;
+    }
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Scroll-reveal animation system
+   Elements with [data-animate] start hidden and fade/slide in
+   when the IntersectionObserver adds .in-view
+   ───────────────────────────────────────────────────────────── */
+[data-animate] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity   0.65s cubic-bezier(0.16, 1, 0.3, 1) var(--ad, 0ms),
+    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1) var(--ad, 0ms);
+}
+[data-animate="left"]  { transform: translateX(-36px); }
+[data-animate="right"] { transform: translateX(36px); }
+[data-animate="scale"] { transform: scale(0.92) translateY(16px); }
+
+[data-animate].in-view {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-animate] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

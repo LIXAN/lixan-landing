@@ -1,0 +1,326 @@
+---
+/**
+ * Hero.astro
+ * ─────────────────────────────────────────────────────────────
+ * Layout: columna única centrada, full-viewport
+ *   Fondo: BG_desktop.jpg (desktop) / BG_mobile.jpg (mobile)
+ *   Capa de overlay oscuro → texto siempre legible
+ *   Contenido: badge · headline · sub · CTAs · stats
+ *
+ * Sin imagen decorativa secundaria.
+ * Animaciones: CSS puro, staggered, respeta prefers-reduced-motion.
+ * ─────────────────────────────────────────────────────────────
+ */
+---
+
+<section class="hero" id="inicio" aria-label="Sección principal Lixan">
+
+  <!-- ── Fondo: imagen + overlay + glow + vignette ─────────────
+       Todo aria-hidden; puramente decorativo.
+  ─────────────────────────────────────────────────────────────── -->
+  <div class="hero-bg" aria-hidden="true">
+
+    <!-- Imagen responsive: mobile primero, desktop en pantallas grandes -->
+    <picture class="hero-bg-picture">
+      <source srcset="/images/BG_mobile.jpg" media="(max-width: 767px)" />
+      <img
+        src="/images/BG_desktop.jpg"
+        alt=""
+        class="hero-bg-photo"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+      />
+    </picture>
+
+    <!-- Overlay semitransparente: mantiene legibilidad del texto -->
+    <div class="hero-bg-overlay"></div>
+
+    <!-- Glow violeta centrado: añade profundidad sobre la foto -->
+    <div class="hero-glow-center"></div>
+
+    <!-- Vignette: oscurece bordes para separar visualmente del resto -->
+    <div class="hero-vignette"></div>
+
+  </div>
+
+  <!-- ── Contenido centrado ──────────────────────────────────── -->
+  <div class="hero-content">
+
+    <!-- Headline principal -->
+    <h1 class="hero-headline">
+      Haz que tu negocio<br>
+      <span class="accent">trabaje solo</span>
+    </h1>
+
+    <!-- Subtítulo -->
+    <p class="hero-sub">
+      Construimos automatizaciones y sitios web que capturan leads
+      y procesan tareas sin que intervenga nadie. Cosas concretas,
+      bien hechas, que se entregan.
+    </p>
+
+    <!-- CTAs -->
+    <div class="hero-ctas">
+      <a
+        href="#contacto"
+        class="btn-primary"
+        aria-label="Cuéntanos tu proyecto y agendamos una llamada"
+      >
+        Cuéntanos tu proyecto →
+      </a>
+      <a
+        href="#casos"
+        class="btn-ghost"
+        aria-label="Ver proyectos realizados"
+      >
+        Ver proyectos
+      </a>
+    </div>
+
+  </div>
+  <!-- /hero-content -->
+
+</section>
+
+<style>
+  /* ════════════════════════════════════════════════════════════
+     KEYFRAMES
+  ════════════════════════════════════════════════════════════ */
+
+  @keyframes heroFadeInUp {
+    from { opacity: 0; transform: translateY(28px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0)    scale(1); }
+  }
+
+  /* ════════════════════════════════════════════════════════════
+     SECCIÓN BASE
+  ════════════════════════════════════════════════════════════ */
+
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    background-color: #0C0C0C; /* fallback si la imagen no carga */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ════════════════════════════════════════════════════════════
+     CAPAS DE FONDO
+  ════════════════════════════════════════════════════════════ */
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* Imagen responsive — cubre todo el hero */
+  .hero-bg-picture {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+
+  .hero-bg-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    /* Sin opacidad adicional: la imagen debe verse nítida */
+    opacity: 1;
+  }
+
+  /* Overlay oscuro encima de la imagen — equilibrio entre visibilidad y legibilidad */
+  .hero-bg-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(8, 6, 20, 0.55) 0%,
+      rgba(8, 6, 20, 0.40) 50%,
+      rgba(8, 6, 20, 0.65) 100%
+    );
+  }
+
+  /* Glow violeta central suave — añade coherencia con la paleta de marca */
+  .hero-glow-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 70%;
+    border-radius: 50%;
+    background: radial-gradient(
+      ellipse at 50% 50%,
+      rgba(123, 76, 179, 0.12) 0%,
+      transparent 65%
+    );
+  }
+
+  /* Vignette: oscurece bordes superior e inferior */
+  .hero-vignette {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to bottom, rgba(8, 6, 20, 0.6) 0%,  transparent 18%),
+      linear-gradient(to top,    rgba(8, 6, 20, 0.7) 0%, transparent 20%);
+  }
+
+  /* ════════════════════════════════════════════════════════════
+     CONTENIDO CENTRADO
+  ════════════════════════════════════════════════════════════ */
+
+  .hero-content {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 760px;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+
+    /* Espacio superior para el navbar (72px) */
+    padding-top:    calc(72px + 4rem);
+    padding-bottom: 4rem;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.75rem;
+  }
+
+  @media (min-width: 768px) {
+    .hero-content {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  /* Desktop: left-aligned */
+  @media (min-width: 1024px) {
+    .hero-content {
+      max-width: 1200px;
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .hero-ctas {
+      justify-content: flex-start;
+    }
+
+  }
+
+  /* ── Headline ── */
+  .hero-headline {
+    margin: 0;
+    font-size: clamp(3rem, 6.5vw, 5.25rem);
+    font-weight: 800;
+    line-height: 1.06;
+    letter-spacing: -0.035em;
+    color: #ffffff;
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.5);
+
+    animation: heroFadeInUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 0ms both;
+  }
+
+  /* Frase con gradiente de color */
+  .accent {
+    background: linear-gradient(135deg, #C9A8F0 0%, #A87DD1 45%, #9AAD1A 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Subtítulo ── */
+  .hero-sub {
+    margin: 0;
+    max-width: 540px;
+    font-size: clamp(1rem, 1.6vw, 1.125rem);
+    color: rgba(230, 220, 255, 0.85);
+    line-height: 1.7;
+
+    animation: heroFadeInUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 140ms both;
+  }
+
+  /* ── CTAs ── */
+  .hero-ctas {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.875rem;
+    flex-wrap: wrap;
+
+    animation: heroFadeInUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 280ms both;
+  }
+
+  /* Botón primario */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.9rem 1.875rem;
+    background: linear-gradient(135deg, #7B4CB3 0%, #5A3285 100%);
+    border: 1px solid rgba(168, 125, 209, 0.35);
+    border-radius: 9999px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+    box-shadow: 0 8px 32px rgba(123, 76, 179, 0.45);
+    transition: transform 240ms ease, box-shadow 240ms ease;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 44px rgba(123, 76, 179, 0.60);
+  }
+
+  /* Botón ghost */
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.9rem 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    border-radius: 9999px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: rgba(230, 220, 255, 0.80);
+    backdrop-filter: blur(4px);
+    transition: color 240ms ease, border-color 240ms ease, background-color 240ms ease;
+  }
+
+  .btn-ghost:hover {
+    color: #ffffff;
+    border-color: rgba(168, 125, 209, 0.55);
+    background-color: rgba(123, 76, 179, 0.10);
+  }
+
+  /* ════════════════════════════════════════════════════════════
+     RESPONSIVE — MOBILE (< 768px)
+  ════════════════════════════════════════════════════════════ */
+
+  @media (max-width: 767px) {
+    .hero-content {
+      padding-top: calc(72px + 2.5rem);
+      padding-bottom: 3rem;
+      gap: 1.5rem;
+    }
+  }
+
+  /* ════════════════════════════════════════════════════════════
+     REDUCED MOTION
+  ════════════════════════════════════════════════════════════ */
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-headline,
+    .hero-sub,
+    .hero-ctas {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>

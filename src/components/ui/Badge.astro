@@ -1,0 +1,37 @@
+---
+/**
+ * Badge.astro
+ * Small label pill for categories, tags and status indicators.
+ *
+ * Props:
+ *   variant  — 'default' | 'accent' | 'outline' | 'success' | 'warning' (default: 'default')
+ *   class?   — additional classes
+ */
+
+interface Props {
+  variant?: 'default' | 'accent' | 'outline' | 'success' | 'warning';
+  class?: string;
+}
+
+const { variant = 'default', class: className = '' } = Astro.props;
+
+const variantClasses: Record<NonNullable<Props['variant']>, string> = {
+  default:  'bg-surface-700 text-text-secondary border border-surface-600',
+  accent:   'bg-brand-500/15 text-brand-300 border border-brand-500/30',
+  outline:  'bg-transparent text-text-muted border border-surface-600 hover:border-surface-500',
+  success:  'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30',
+  warning:  'bg-amber-500/10 text-amber-400 border border-amber-500/30',
+};
+
+const classes = [
+  'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-pill text-xs font-medium',
+  variantClasses[variant],
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<span class={classes}>
+  <slot />
+</span>

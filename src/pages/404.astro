@@ -1,0 +1,68 @@
+---
+/**
+ * 404.astro — Custom Not Found page
+ * Shown for all routes that don't match any page.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/layout/Navbar.astro';
+import Footer from '../components/layout/Footer.astro';
+---
+
+<BaseLayout
+  title="Página no encontrada"
+  description="La página que buscás no existe. Navegá a nuestra home o contactanos directamente."
+>
+  <Navbar />
+
+  <main class="min-h-[70vh] flex items-center justify-center py-24">
+    <div class="container-lixan text-center max-w-xl">
+
+      <!-- Visual indicator -->
+      <p class="text-8xl font-extrabold text-brand-500/20 mb-2 select-none">404</p>
+
+      <h1 class="text-3xl sm:text-4xl font-extrabold mb-4">
+        Esta página <span class="gradient-text">no existe</span>
+      </h1>
+      <p class="text-text-secondary mb-10 text-lg">
+        Puede que el enlace esté desactualizado o que hayas escrito la URL incorrectamente.
+      </p>
+
+      <!-- Quick nav links -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+        <a
+          href="/"
+          class="inline-flex items-center gap-2 px-7 py-3.5 rounded-pill bg-brand-500 hover:bg-brand-400 text-white font-semibold transition-all duration-200 shadow-lg shadow-brand-500/30"
+        >
+          Ir al inicio
+        </a>
+        <a
+          href="/#contacto"
+          class="inline-flex items-center gap-2 px-7 py-3.5 rounded-pill border border-surface-600 hover:border-brand-500/50 text-text-secondary hover:text-text-primary font-semibold transition-all duration-200"
+        >
+          Contactarnos
+        </a>
+      </div>
+
+      <!-- Section shortcuts -->
+      <p class="text-sm text-text-muted mb-4">O navegá directamente a:</p>
+      <div class="flex flex-wrap justify-center gap-3">
+        {[
+          { href: '/#servicios', label: 'Servicios' },
+          { href: '/#casos',     label: 'Casos de éxito' },
+          { href: '/#agendar',  label: 'Agendar llamada' },
+          { href: '/blog',      label: 'Blog' },
+        ].map(({ href, label }) => (
+          <a
+            href={href}
+            class="text-sm px-4 py-2 rounded-lg border border-surface-700 hover:border-brand-500/40 text-text-muted hover:text-text-primary transition-all duration-200"
+          >
+            {label}
+          </a>
+        ))}
+      </div>
+
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

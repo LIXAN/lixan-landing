@@ -1,0 +1,202 @@
+---
+/**
+ * BaseLayout.astro
+ * Root layout: SEO-optimized head (meta, OG, Twitter, JSON-LD, favicon)
+ * + global scroll-reveal animation system.
+ */
+import '../styles/global.css';
+import ChatWidget from '../components/ChatWidget';
+
+interface Props {
+  /** Page title — Home renders brand tagline; others get "Title | Lixan" */
+  title: string;
+  /** Meta description — keep 150–160 chars */
+  description: string;
+  /** Absolute URL of the Open Graph image (1200×630) */
+  ogImage?: string;
+  /** Canonical URL override — defaults to current request URL */
+  canonical?: string;
+  /** True on article/blog pages */
+  isArticle?: boolean;
+  /** ISO date string for Article schema (blog posts) */
+  publishedAt?: string;
+  /** ISO date string for Article schema update (blog posts) */
+  updatedAt?: string;
+}
+
+const {
+  title,
+  description,
+  ogImage,
+  canonical,
+  isArticle = false,
+  publishedAt,
+  updatedAt,
+} = Astro.props;
+
+const siteUrl    = import.meta.env.PUBLIC_SITE_URL ?? 'https://lixan.co';
+const logoUrl    = `${siteUrl}/images/LixanLogo.svg`;
+const isotopoUrl = `${siteUrl}/images/LixanIsotipo.svg`;
+
+const pageTitle    = title === 'Home'
+  ? 'Lixan — Automatizaciones y Diseño Web para Empresas'
+  : `${title} | Lixan — Automatizaciones y Diseño Web`;
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, siteUrl).href;
+const ogImageUrl   = ogImage ?? `${siteUrl}/images/og-default.jpg`;
+
+// ─── JSON-LD: Organization (on every page) ───────────────────────────────────
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Lixan',
+  url: siteUrl,
+  logo: logoUrl,
+  description:
+    'Agencia de automatizaciones con N8N/Make y diseño web en Astro. Precio fijo, entrega garantizada.',
+  areaServed: ['CO', 'MX', 'AR', 'CL', 'PE', 'ES'],
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'customer service',
+    email: 'hola@lixan.co',
+    availableLanguage: 'Spanish',
+  },
+  sameAs: [
+    'https://www.instagram.com/lixan_col/',
+    'https://www.facebook.com/share/17yAJkLj59/',
+  ],
+};
+
+// ─── JSON-LD: WebSite with SearchAction ──────────────────────────────────────
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Lixan',
+  url: siteUrl,
+  inLanguage: 'es-CO',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: { '@type': 'EntryPoint', urlTemplate: `${siteUrl}/blog?q={search_term_string}` },
+    'query-input': 'required name=search_term_string',
+  },
+};
+
+// ─── JSON-LD: Article (blog posts only) ──────────────────────────────────────
+const articleSchema = isArticle ? {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description,
+  url: canonicalUrl,
+  image: ogImageUrl,
+  datePublished: publishedAt ?? new Date().toISOString(),
+  dateModified: updatedAt ?? publishedAt ?? new Date().toISOString(),
+  author: { '@type': 'Organization', name: 'Lixan', url: siteUrl },
+  publisher: {
+    '@type': 'Organization',
+    name: 'Lixan',
+    logo: { '@type': 'ImageObject', url: logoUrl },
+  },
+  inLanguage: 'es-CO',
+} : null;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ── -->
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content="Lixan" />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- ── Robots ── -->
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+
+    <!-- ── Geo / region (mercado latinoamericano) ── -->
+    <meta name="geo.region" content="CO" />
+    <meta name="geo.placename" content="Colombia" />
+
+    <!-- ── Open Graph ── -->
+    <meta property="og:type" content={isArticle ? 'article' : 'website'} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Lixan — Automatizaciones y Diseño Web" />
+    <meta property="og:site_name" content="Lixan" />
+    <meta property="og:locale" content="es_CO" />
+    {isArticle && publishedAt && <meta property="article:published_time" content={publishedAt} />}
+    {isArticle && updatedAt && <meta property="article:modified_time" content={updatedAt} />}
+
+    <!-- ── Twitter / X Cards ── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content="Lixan — Automatizaciones y Diseño Web" />
+
+    <!-- ── Favicon suite ── -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#6d3df7" />
+    <meta name="msapplication-TileColor" content="#6d3df7" />
+
+    <!-- ── Performance: preconnect + preload ── -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Preload critical assets -->
+    <link rel="preload" as="image" href="/images/LixanLogo.svg" type="image/svg+xml" />
+
+    <!-- ── JSON-LD Structured Data ── -->
+    <script type="application/ld+json" set:html={JSON.stringify(orgSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+    {articleSchema && (
+      <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+    )}
+
+    <!-- Named slot: page-specific head tags (extra schemas, preloads, etc.) -->
+    <slot name="head" />
+  </head>
+
+  <body>
+    <!-- Page content injected here -->
+    <slot />
+
+    <!-- ── Floating AI chat widget — renders on all pages ── -->
+    <ChatWidget client:load />
+
+    <!-- ── Scroll-reveal IntersectionObserver (is:inline avoids Astro bundling) ── -->
+    <script is:inline>
+      (function () {
+        var io = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (e) {
+              if (e.isIntersecting) {
+                e.target.classList.add('in-view');
+                io.unobserve(e.target);
+              }
+            });
+          },
+          { threshold: 0.08, rootMargin: '0px 0px -56px 0px' }
+        );
+        document.querySelectorAll('[data-animate]').forEach(function (el) {
+          io.observe(el);
+        });
+      })();
+    </script>
+  </body>
+</html>

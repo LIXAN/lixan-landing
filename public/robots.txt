@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Block server-only API routes
+Disallow: /api/
+
+# Block embedded Sanity Studio
+Disallow: /studio/
+
+# Sitemap location
+Sitemap: https://lixan.co/sitemap-index.xml

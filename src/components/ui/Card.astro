@@ -1,0 +1,54 @@
+---
+/**
+ * Card.astro
+ * Generic surface card with optional hover effects and glow border.
+ *
+ * Props:
+ *   hoverable  — adds lift + border glow on hover (default: false)
+ *   padding    — 'none' | 'sm' | 'md' | 'lg' (default: 'md')
+ *   glow       — show a subtle brand glow effect (default: false)
+ *   as?        — HTML element to render ('div' | 'article' | 'section', default: 'div')
+ *   class?     — additional classes
+ */
+
+interface Props {
+  hoverable?: boolean;
+  padding?: 'none' | 'sm' | 'md' | 'lg';
+  glow?: boolean;
+  as?: 'div' | 'article' | 'section' | 'li';
+  class?: string;
+}
+
+const {
+  hoverable = false,
+  padding = 'md',
+  glow = false,
+  as: Tag = 'div',
+  class: className = '',
+} = Astro.props;
+
+const paddingClasses: Record<NonNullable<Props['padding']>, string> = {
+  none: '',
+  sm:   'p-4',
+  md:   'p-6',
+  lg:   'p-8',
+};
+
+const classes = [
+  // Base
+  'rounded-brand border border-surface-700 bg-surface-900',
+  // Padding
+  paddingClasses[padding],
+  // Hover animation
+  hoverable && 'transition-all duration-300 hover:-translate-y-1 hover:border-brand-500/40 cursor-pointer',
+  // Glow
+  glow && 'shadow-lg shadow-brand-500/10',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<Tag class={classes}>
+  <slot />
+</Tag>

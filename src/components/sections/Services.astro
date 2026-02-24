@@ -1,0 +1,167 @@
+---
+/**
+ * Services.astro
+ * Grid of service cards. Data ideally fetched from Sanity via getAllServices().
+ * Uses static placeholder data until Sanity is connected.
+ */
+import { getAllServices } from '../../lib/sanity';
+import type { SanityService } from '../../lib/sanity';
+
+// Icon map: maps icon name → inline SVG path
+const iconPaths: Record<string, string> = {
+  bolt: 'M11.983 1.907a.75.75 0 00-1.292-.657l-8.5 9.5A.75.75 0 002.75 12h6.572l-1.305 6.093a.75.75 0 001.292.657l8.5-9.5A.75.75 0 0017.25 8h-6.572l1.305-6.093z',
+  globe: 'M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418',
+  chart: 'M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z',
+  puzzle: 'M14.25 6.087c0-.355.186-.676.401-.959.221-.29.349-.634.349-1.003 0-1.036-1.007-1.875-2.25-1.875s-2.25.84-2.25 1.875c0 .369.128.713.349 1.003.215.283.401.604.401.959v0a.64.64 0 01-.657.643 48.39 48.39 0 01-4.163-.3c.186 1.613.293 3.25.315 4.907a.656.656 0 01-.658.663v0c-.355 0-.676-.186-.959-.401a1.647 1.647 0 00-1.003-.349c-1.036 0-1.875 1.007-1.875 2.25s.84 2.25 1.875 2.25c.369 0 .713-.128 1.003-.349.283-.215.604-.401.959-.401v0c.31 0 .555.26.532.57a48.039 48.039 0 01-.642 5.056c1.518.19 3.058.309 4.616.354a.64.64 0 00.657-.643v0c0-.355-.186-.676-.401-.959a1.647 1.647 0 01-.349-1.003c0-1.035 1.008-1.875 2.25-1.875 1.243 0 2.25.84 2.25 1.875 0 .369-.128.713-.349 1.003-.215.283-.4.604-.4.959v0c0 .333.277.599.61.58a48.1 48.1 0 005.427-.63 48.05 48.05 0 00.582-4.717.532.532 0 00-.533-.57v0c-.355 0-.676.186-.959.401-.29.221-.634.349-1.003.349-1.035 0-1.875-1.007-1.875-2.25s.84-2.25 1.875-2.25c.37 0 .713.128 1.003.349.283.215.604.401.959.401v0a.656.656 0 00.658-.663 48.422 48.422 0 00-.37-5.36c-1.886.342-3.81.574-5.766.689a.578.578 0 01-.61-.58v0z',
+  sparkles: 'M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z',
+  terminal: 'M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z',
+  rocket: 'M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z',
+  envelope: 'M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75',
+};
+
+// Static fallback data shown until Sanity is configured
+const placeholderServices: SanityService[] = [
+  {
+    _id: '1',
+    name: 'Landing Pages',
+    slug: { current: 'landing-pages' },
+    shortDescription: 'La página que convierte visitantes en clientes. Cada elemento está pensado para que el usuario tome acción, no para que se vea bien en un portafolio.',
+    fullDescription: '',
+    icon: 'rocket',
+    features: ['Diseño orientado a conversión', 'Carga en menos de 1 segundo', 'Conectada a tu herramienta de ventas'],
+    order: 1,
+    highlighted: false,
+  },
+  {
+    _id: '2',
+    name: 'Sitios Web',
+    slug: { current: 'sitios-web' },
+    shortDescription: 'Presencia profesional que carga rápido, aparece en Google y podés actualizar vos mismo sin tocar una línea de código.',
+    fullDescription: '',
+    icon: 'globe',
+    features: ['Velocidad que Google premia', 'Panel de edición propio y sencillo', 'Adaptado a todos los dispositivos'],
+    order: 2,
+    highlighted: true,
+  },
+  {
+    _id: '3',
+    name: 'Automatizaciones',
+    slug: { current: 'automatizaciones' },
+    shortDescription: 'Las tareas repetitivas que hacés a mano cada día dejan de existir. Notificaciones, reportes y seguimientos que pasan solos.',
+    fullDescription: '',
+    icon: 'bolt',
+    features: ['Flujos que se activan solos', 'Conecta las herramientas que ya usás', 'Alertas y notificaciones automáticas'],
+    order: 3,
+    highlighted: false,
+  },
+  {
+    _id: '4',
+    name: 'IA & Chatbots',
+    slug: { current: 'ia-chatbots' },
+    shortDescription: 'Un asistente que conoce tu negocio, atiende clientes a cualquier hora y captura leads mientras vos te dedicás a lo importante.',
+    fullDescription: '',
+    icon: 'sparkles',
+    features: ['Web, WhatsApp y Telegram', 'Entrenado con tu información real', 'Disponible 24/7 sin costo operativo'],
+    order: 4,
+    highlighted: false,
+  },
+  {
+    _id: '5',
+    name: 'CMS & Dashboards',
+    slug: { current: 'cms-dashboards' },
+    shortDescription: 'El panel que tu equipo realmente necesita: los datos importantes a la vista y el contenido actualizable sin pedirle ayuda a nadie.',
+    fullDescription: '',
+    icon: 'chart',
+    features: ['Interfaz diseñada para tu equipo', 'Reportes y métricas en tiempo real', 'Roles y permisos por usuario'],
+    order: 5,
+    highlighted: false,
+  },
+  {
+    _id: '6',
+    name: 'Integraciones',
+    slug: { current: 'integraciones' },
+    shortDescription: 'Si tus herramientas no se hablan entre sí, lo resolvemos. Conectamos lo que ya pagás para que trabaje junto y sin fricciones.',
+    fullDescription: '',
+    icon: 'puzzle',
+    features: ['HubSpot, Shopify, Notion, Airtable', 'Sin duplicar trabajo ni perder datos', 'Monitoreo y alertas incluidas'],
+    order: 6,
+    highlighted: false,
+  },
+];
+
+// Attempt to load from Sanity; fall back to placeholders
+let services: SanityService[] = placeholderServices;
+try {
+  const fetched = await getAllServices();
+  if (fetched.length > 0) services = fetched;
+} catch {
+  // Sanity not yet configured — using placeholder data
+}
+---
+
+<section id="servicios" class="py-24 md:py-32" aria-labelledby="services-heading">
+  <div class="container-lixan">
+
+    <!-- ── Section header ── -->
+    <div class="text-center mb-16" data-animate>
+      <span class="inline-block text-brand-400 text-sm font-semibold uppercase tracking-widest mb-3">
+        Lo que hacemos
+      </span>
+      <h2 id="services-heading" class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4">
+        Servicios para <span class="gradient-text">problemas concretos</span>
+      </h2>
+      <p class="text-text-secondary max-w-xl mx-auto text-lg">
+        Sin paquetes genéricos. Cada entrega resuelve algo específico de tu operación o tu presencia digital.
+      </p>
+    </div>
+
+    <!-- ── Services grid ── -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {services.map((service, i) => {
+        const iconPath = iconPaths[service.icon] ?? iconPaths['rocket'];
+        return (
+          <article
+            data-animate="scale"
+            style={`--ad: ${i * 80}ms`}
+            class={`relative group p-7 rounded-brand border transition-all duration-300 hover:-translate-y-1 ${
+              service.highlighted
+                ? 'border-brand-500/60 bg-brand-500/5 shadow-lg shadow-brand-500/10'
+                : 'border-surface-700 bg-surface-900 hover:border-brand-500/40'
+            }`}
+          >
+            {service.highlighted && (
+              <span class="absolute top-4 right-4 text-xs font-semibold px-2.5 py-1 rounded-pill bg-brand-500 text-white">
+                Popular
+              </span>
+            )}
+
+            <!-- Icon -->
+            <div class="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center mb-5 group-hover:bg-brand-500/20 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d={iconPath} />
+              </svg>
+            </div>
+
+            <!-- Content -->
+            <h3 class="text-lg font-bold text-text-primary mb-2">{service.name}</h3>
+            <p class="text-text-secondary text-sm leading-relaxed mb-5">{service.shortDescription}</p>
+
+            <!-- Features list -->
+            {service.features && service.features.length > 0 && (
+              <ul class="space-y-1.5">
+                {service.features.slice(0, 3).map((feature) => (
+                  <li class="flex items-center gap-2 text-xs text-text-muted">
+                    <svg class="w-4 h-4 text-brand-400 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </article>
+        );
+      })}
+    </div>
+  </div>
+</section>

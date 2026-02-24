@@ -1,0 +1,81 @@
+---
+/**
+ * blog/index.astro — Blog listing page
+ */
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Navbar from '../../components/layout/Navbar.astro';
+import Footer from '../../components/layout/Footer.astro';
+import { getAllPosts } from '../../lib/sanity';
+import type { SanityPost } from '../../lib/sanity';
+
+let posts: SanityPost[] = [];
+try {
+  posts = await getAllPosts();
+} catch {
+  // Sanity not configured yet
+}
+---
+
+<BaseLayout
+  title="Blog"
+  description="Artículos sobre automatizaciones, diseño web e inteligencia artificial para hacer crecer tu negocio."
+>
+  <Navbar />
+
+  <main class="pt-24 pb-32">
+    <div class="container-lixan">
+      <!-- ── Header ── -->
+      <div class="text-center mb-16">
+        <span class="inline-block text-brand-400 text-sm font-semibold uppercase tracking-widest mb-3">Blog</span>
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-4">
+          Recursos & <span class="gradient-text">Conocimiento</span>
+        </h1>
+        <p class="text-text-secondary max-w-xl mx-auto">
+          Guías prácticas, casos de estudio y tendencias sobre automatización y diseño web.
+        </p>
+      </div>
+
+      <!-- ── Posts grid ── -->
+      {posts.length === 0 ? (
+        <div class="text-center py-20 text-text-muted">
+          <p class="text-lg">Próximamente publicaremos artículos aquí.</p>
+          <a href="/" class="mt-4 inline-flex text-brand-400 hover:text-brand-300 text-sm transition-colors">
+            ← Volver al inicio
+          </a>
+        </div>
+      ) : (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {posts.map((post) => (
+            <article class="group flex flex-col rounded-brand border border-surface-700 bg-surface-900 overflow-hidden hover:border-brand-500/40 transition-all duration-300 hover:-translate-y-1">
+              <!-- Cover -->
+              <div class="h-48 bg-gradient-to-br from-surface-800 to-brand-950/40"></div>
+              <!-- Body -->
+              <div class="p-6 flex flex-col flex-1">
+                <time
+                  datetime={post.publishedAt}
+                  class="text-xs text-text-muted mb-3"
+                >
+                  {new Date(post.publishedAt).toLocaleDateString('es-ES', {
+                    year: 'numeric', month: 'long', day: 'numeric',
+                  })}
+                </time>
+                <h2 class="text-base font-bold text-text-primary mb-2">{post.title}</h2>
+                <p class="text-text-secondary text-sm leading-relaxed flex-1">{post.excerpt}</p>
+                <a
+                  href={`/blog/${post.slug.current}`}
+                  class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-400 hover:text-brand-300 transition-colors"
+                >
+                  Leer artículo →
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

@@ -1,0 +1,101 @@
+---
+/**
+ * FAQ.astro
+ * Frequently asked questions accordion.
+ * Removes final objections just before the contact form.
+ * Uses native <details>/<summary> for zero-JS accessibility.
+ */
+
+const faqs = [
+  {
+    // TODO: si quieren agregar rangos orientativos de precio, definirlos aquí
+    question: '¿Cuánto cuesta un proyecto?',
+    answer:
+      'Cada proyecto tiene precio fijo antes de empezar — lo que acordamos es lo que pagas. Los rangos varían según el alcance y los enviamos en la propuesta sin costo. No cobramos por hora ni agregamos costos al final.',
+  },
+  {
+    question: '¿Cuánto tarda un proyecto en terminarse?',
+    answer:
+      'Una landing page o automatización estándar: 2 a 3 semanas. Un sitio completo: 4 a 6 semanas. Los tiempos se definen en la propuesta y los cumplimos. Si hay un imprevisto, te avisamos antes, no después.',
+  },
+  {
+    question: '¿Qué pasa si el resultado no es lo que esperaba?',
+    answer:
+      'Todos los proyectos incluyen 30 días de ajustes post-entrega. El alcance queda definido por escrito antes de empezar, así que ambas partes saben exactamente qué esperar. Si algo no funciona como se acordó, lo corregimos sin costo adicional.',
+  },
+  {
+    question: '¿Necesito saber de tecnología para trabajar con ustedes?',
+    answer:
+      'No. Nos cuentas el problema de negocio y nosotros lo traducimos a una solución técnica. Al final te entregamos todo documentado para que puedas operarlo sin depender de nosotros.',
+  },
+  {
+    question: '¿Trabajan con empresas de cualquier tamaño?',
+    answer:
+      'Sí. La mayoría de nuestros clientes son PyMEs, startups y profesionales independientes que necesitan soluciones bien hechas sin los tiempos y costos de una agencia grande. Si tienes un problema concreto, podemos ayudarte.',
+  },
+];
+---
+
+<section id="faq" class="py-24 md:py-32" aria-labelledby="faq-heading">
+  <div class="container-lixan">
+    <div class="max-w-2xl mx-auto">
+
+      <!-- ── Section header ── -->
+      <div class="text-center mb-12">
+        <span class="inline-block text-brand-400 text-sm font-semibold uppercase tracking-widest mb-3">
+          Preguntas frecuentes
+        </span>
+        <h2 id="faq-heading" class="text-3xl sm:text-4xl font-extrabold mb-4">
+          ¿Tienes dudas? <span class="gradient-text">Te las resolvemos</span>
+        </h2>
+        <p class="text-text-secondary">
+          Si no encuentras lo que buscas, escríbenos directamente.
+        </p>
+      </div>
+
+      <!-- ── Accordion ── -->
+      <div class="space-y-3">
+        {faqs.map((faq, i) => (
+          <details
+            class="group rounded-brand border border-surface-700 bg-surface-900 overflow-hidden open:border-brand-500/40 transition-colors duration-200"
+            name="faq-accordion"
+          >
+            <summary
+              class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none text-sm font-semibold text-text-primary hover:text-text-primary transition-colors select-none"
+              aria-label={`Pregunta ${i + 1}: ${faq.question}`}
+            >
+              <span>{faq.question}</span>
+              <!-- Chevron icon rotates on open -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-5 h-5 text-text-muted shrink-0 transition-transform duration-300 group-open:rotate-180"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            </summary>
+
+            <div class="px-6 pb-5">
+              <p class="text-text-secondary text-sm leading-relaxed">{faq.answer}</p>
+            </div>
+          </details>
+        ))}
+      </div>
+
+      <!-- ── Still have questions ── -->
+      <div class="mt-10 text-center p-6 rounded-brand border border-surface-700 bg-surface-900">
+        <p class="text-text-secondary text-sm mb-4">
+          ¿Tu pregunta no está aquí? Escríbenos directamente.
+        </p>
+        <a
+          href="#contacto"
+          class="inline-flex items-center gap-2 px-6 py-2.5 rounded-pill bg-brand-500 hover:bg-brand-400 text-white text-sm font-semibold transition-colors duration-200"
+        >
+          Escríbenos
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
