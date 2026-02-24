@@ -1,20 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <!-- Background square with rounded corners -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Dark brand background -->
   <rect width="64" height="64" rx="14" fill="#0f0d1a"/>
-  <!-- Gradient: violet → electric blue -->
-  <defs>
-    <linearGradient id="lixam-grad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#855dff"/>
-      <stop offset="100%" stop-color="#38bdf8"/>
-    </linearGradient>
-  </defs>
-  <!-- Letter "L" centered -->
-  <text
-    x="14"
-    y="50"
-    font-family="ui-sans-serif, system-ui, sans-serif"
-    font-size="42"
-    font-weight="800"
-    fill="url(#lixam-grad)"
-  >L</text>
+  <!-- Lixan isotipo scaled to fit inside 64x64 -->
+  <g transform="translate(9.04, 7.96) scale(0.535)">
+    <polygon fill="#a678ff" points="69.85 44.65 69.85 33.49 53.3 50.04 69.85 66.59 69.85 55.43 85.92 55.43 85.92 100.08 67.82 100.08 67.82 91.31 42.96 65.18 18.09 91.31 18.09 100.08 0 100.08 0 55.43 16.07 55.43 16.07 66.59 32.62 50.04 16.07 33.49 16.07 44.65 0 44.65 0 0 18.09 0 18.09 8.78 42.96 34.9 67.82 8.78 67.82 0 85.92 0 85.92 44.65 69.85 44.65"/>
+  </g>
 </svg>
