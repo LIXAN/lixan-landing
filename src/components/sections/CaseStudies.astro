@@ -96,11 +96,11 @@ try {
 
           <!-- Cover image -->
           {c.coverImage ? (
-            <div class="h-44 overflow-hidden bg-surface-800">
+            <div class="h-44 bg-surface-800 flex items-center justify-center overflow-hidden">
               <img
-                src={urlFor(c.coverImage).width(600).height(176).fit('crop').url()}
+                src={urlFor(c.coverImage).width(600).url()}
                 alt={(c.coverImage as any).alt ?? c.title ?? ''}
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                class="w-full h-full object-contain"
                 loading="lazy"
                 decoding="async"
               />
