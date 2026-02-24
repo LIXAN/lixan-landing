@@ -8,7 +8,7 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: process.env.PUBLIC_SITE_URL ?? 'https://lixan.co',
+  site: process.env.PUBLIC_SITE_URL || 'https://www.lixantech.com',
   output: 'server',
   adapter: vercel(),
 
@@ -26,7 +26,7 @@ export default defineConfig({
     // Sanity Studio embedded at /studio
     sanity({
       projectId: 'dbxx60js',
-      dataset: process.env.SANITY_DATASET ?? 'production',
+      dataset: process.env.SANITY_DATASET || 'production',
       useCdn: false,
       apiVersion: '2024-01-01',
       studioBasePath: '/studio',
