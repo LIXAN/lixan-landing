@@ -6,7 +6,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Navbar from '../../components/layout/Navbar.astro';
 import Footer from '../../components/layout/Footer.astro';
 import Badge from '../../components/ui/Badge.astro';
-import { getAllCaseStudies, getCaseStudyBySlug } from '../../lib/sanity';
+import { getAllCaseStudies, getCaseStudyBySlug, urlFor } from '../../lib/sanity';
 import type { SanityCaseStudy } from '../../lib/sanity';
 
 export async function getStaticPaths() {
@@ -87,8 +87,20 @@ const caseSchema = {
         <h1 class="text-3xl sm:text-4xl font-extrabold mb-4">{caseStudy.title}</h1>
       </header>
 
-      <!-- ── Cover image placeholder ── -->
-      <div class="w-full h-64 bg-gradient-to-br from-surface-800 to-brand-950/40 rounded-brand mb-10"></div>
+      <!-- ── Cover image ── -->
+      {caseStudy.coverImage ? (
+        <div class="w-full h-64 rounded-brand overflow-hidden bg-surface-800 mb-10 flex items-center justify-center">
+          <img
+            src={urlFor(caseStudy.coverImage).width(900).url()}
+            alt={(caseStudy.coverImage as any).alt ?? caseStudy.title}
+            class="w-full h-full object-contain"
+            loading="eager"
+            decoding="async"
+          />
+        </div>
+      ) : (
+        <div class="w-full h-64 bg-gradient-to-br from-surface-800 to-brand-950/40 rounded-brand mb-10"></div>
+      )}
 
       <!-- ── Results highlight ── -->
       {caseStudy.results && caseStudy.results.length > 0 && (
