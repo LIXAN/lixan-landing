@@ -97,8 +97,8 @@ export default function ChatWidget() {
           role="dialog"
           aria-label="Chat con asistente Lixan"
           aria-modal="true"
-          className="fixed bottom-24 right-5 z-[200] w-[340px] max-w-[calc(100vw-2.5rem)] flex flex-col rounded-2xl border border-surface-700 bg-surface-900 shadow-2xl shadow-black/50 overflow-hidden"
-          style={{ maxHeight: 'min(520px, calc(100svh - 8rem))' }}
+          className="fixed bottom-0 left-0 right-0 sm:bottom-24 sm:left-auto sm:right-5 z-[200] w-full sm:w-[340px] flex flex-col rounded-t-2xl sm:rounded-2xl border border-surface-700 bg-surface-900 shadow-2xl shadow-black/50 overflow-hidden"
+          style={{ maxHeight: 'min(80svh, calc(100svh - 4.5rem))' }}
         >
           {/* Header */}
           <div className="flex items-center justify-between gap-3 px-4 py-3 bg-surface-800 border-b border-surface-700">
