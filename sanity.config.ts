@@ -61,7 +61,7 @@ export default defineConfig({
 
             S.divider(),
 
-            S.listItem().title('Prospectos (Chat)').schemaType('lead').child(S.documentTypeList('lead')),
+            S.listItem().title('Prospectos').schemaType('lead').child(S.documentTypeList('lead')),
           ]),
     }),
     visionTool(),

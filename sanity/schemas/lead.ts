@@ -2,12 +2,12 @@ import { defineType, defineField } from 'sanity';
 
 /**
  * lead.ts
- * Schema for leads captured via the AI chat widget.
- * Visible in Sanity Studio under "Prospectos (Chat)".
+ * Schema for leads captured via the contact form and the AI chat widget.
+ * Visible in Sanity Studio under "Prospectos".
  */
 export const leadSchema = defineType({
   name: 'lead',
-  title: 'Prospectos (Chat)',
+  title: 'Prospectos',
   type: 'document',
   fields: [
     defineField({
@@ -24,6 +24,11 @@ export const leadSchema = defineType({
     defineField({
       name: 'phone',
       title: 'Teléfono',
+      type: 'string',
+    }),
+    defineField({
+      name: 'company',
+      title: 'Empresa',
       type: 'string',
     }),
     defineField({
@@ -54,7 +59,12 @@ export const leadSchema = defineType({
       title: 'Fuente',
       type: 'string',
       readOnly: true,
-      initialValue: 'chat_widget',
+      options: {
+        list: [
+          { title: 'Chat widget', value: 'chat_widget' },
+          { title: 'Formulario de contacto', value: 'contact_form' },
+        ],
+      },
     }),
     defineField({
       name: 'capturedAt',

@@ -173,6 +173,12 @@ const articleSchema = isArticle ? {
   </head>
 
   <body>
+    <!-- Scroll to top on every page load / refresh -->
+    <script is:inline>
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      window.scrollTo(0, 0);
+    </script>
+
     <!-- Page content injected here -->
     <slot />
 
