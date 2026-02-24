@@ -44,7 +44,7 @@ function getCalLink(): string {
     'lixan';
   const slug =
     (typeof import.meta !== 'undefined' && (import.meta.env as Record<string, string>).PUBLIC_CAL_EVENT_SLUG) ??
-    'consulta-gratuita';
+    'reunion-estrategica';
   return `${username}/${slug}`;
 }
 
