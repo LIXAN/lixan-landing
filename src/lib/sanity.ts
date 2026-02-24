@@ -5,15 +5,16 @@ import type { SanityImageSource } from '@sanity/image-url';
 // ─────────────────────────────────────────────────────────────
 // Client initialisation
 // ─────────────────────────────────────────────────────────────
-// Use || (not ??) so empty-string values also fall through to the hardcoded default.
-// import.meta.env is NOT used here because it is unreliable at module-load time
-// during Vercel's SSR pre-rendering phase; process.env is always populated.
+// projectId and dataset are intentionally hardcoded: they are public values
+// (identical to sanity.config.ts and astro.config.mjs) and hardcoding them
+// is the only reliable way to avoid env-var timing issues during Vercel's
+// SSR pre-rendering phase where process.env may not yet be populated.
 export const sanityClient = createClient({
-  projectId:  process.env.SANITY_PROJECT_ID  || 'dbxx60js',
-  dataset:   (process.env.SANITY_DATASET     || 'production').trim() || 'production',
+  projectId:  'dbxx60js',
+  dataset:    'production',
   apiVersion: '2024-01-01',
-  token:      process.env.SANITY_API_TOKEN   || undefined,
-  useCdn:     process.env.NODE_ENV === 'production',
+  token:      process.env.SANITY_API_TOKEN || undefined,
+  useCdn:     false,
 });
 
 // ─────────────────────────────────────────────────────────────
