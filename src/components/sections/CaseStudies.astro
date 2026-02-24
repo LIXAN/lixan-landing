@@ -4,7 +4,7 @@
  * Social proof section showcasing featured client projects.
  * Data is loaded from Sanity; placeholders used until CMS is configured.
  */
-import { getAllCaseStudies } from '../../lib/sanity';
+import { getAllCaseStudies, urlFor } from '../../lib/sanity';
 import type { SanityCaseStudy } from '../../lib/sanity';
 
 // Static fallback until Sanity is connected
@@ -94,11 +94,22 @@ try {
           class="group relative flex flex-col rounded-brand border border-surface-700 bg-surface-900 overflow-hidden hover:border-brand-500/40 hover:shadow-[0_0_32px_rgba(109,61,247,0.22)] transition-all duration-300 hover:-translate-y-1"
         >
 
-          <!-- Cover image placeholder -->
-          <!-- TODO: render real image with urlFor(c.coverImage).width(600).url() -->
-          <div class="h-44 bg-gradient-to-br from-surface-800 to-brand-950/40 flex items-center justify-center">
-            <span class="text-4xl" aria-hidden="true">🏆</span>
-          </div>
+          <!-- Cover image -->
+          {c.coverImage ? (
+            <div class="h-44 overflow-hidden bg-surface-800">
+              <img
+                src={urlFor(c.coverImage).width(600).height(176).fit('crop').url()}
+                alt={(c.coverImage as any).alt ?? c.title ?? ''}
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          ) : (
+            <div class="h-44 bg-gradient-to-br from-surface-800 to-brand-950/40 flex items-center justify-center">
+              <span class="text-4xl" aria-hidden="true">🏆</span>
+            </div>
+          )}
 
           <!-- Body -->
           <div class="p-6 flex flex-col flex-1">
