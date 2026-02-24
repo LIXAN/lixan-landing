@@ -3,31 +3,55 @@ import { createImageUrlBuilder } from '@sanity/image-url';
 import type { SanityImageSource } from '@sanity/image-url';
 
 // ─────────────────────────────────────────────────────────────
-// Client initialisation
+// Lazy client initialisation
 // ─────────────────────────────────────────────────────────────
-// projectId and dataset are intentionally hardcoded: they are public values
-// (identical to sanity.config.ts and astro.config.mjs) and hardcoding them
-// is the only reliable way to avoid env-var timing issues during Vercel's
-// SSR pre-rendering phase where process.env may not yet be populated.
-export const sanityClient = createClient({
-  projectId:  'dbxx60js',
-  dataset:    'production',
-  apiVersion: '2024-01-01',
-  token:      process.env.SANITY_API_TOKEN || undefined,
-  useCdn:     false,
+// createClient is intentionally NOT called at module-load time.
+// Calling it at the top level causes Vercel's SSR pre-rendering
+// phase to run the dataset validation before env vars are ready,
+// producing "Datasets can only contain lowercase characters…".
+// The getter pattern defers instantiation to the first actual fetch.
+
+let _client: ReturnType<typeof createClient> | null = null;
+
+function getSanityClient(): ReturnType<typeof createClient> {
+  if (!_client) {
+    _client = createClient({
+      projectId:  'dbxx60js',
+      dataset:    'production',
+      apiVersion: '2024-01-01',
+      token:      process.env.SANITY_API_TOKEN || undefined,
+      useCdn:     false,
+    });
+  }
+  return _client;
+}
+
+// Keep a named export for any code that imports `sanityClient` directly.
+export { getSanityClient as getSanityClient };
+export const sanityClient = new Proxy({} as ReturnType<typeof createClient>, {
+  get(_target, prop) {
+    return (getSanityClient() as any)[prop];
+  },
 });
 
 // ─────────────────────────────────────────────────────────────
 // Image URL helper
 // ─────────────────────────────────────────────────────────────
-const builder = createImageUrlBuilder(sanityClient);
+let _builder: ReturnType<typeof createImageUrlBuilder> | null = null;
+
+function getBuilder() {
+  if (!_builder) {
+    _builder = createImageUrlBuilder(getSanityClient());
+  }
+  return _builder;
+}
 
 /**
  * Returns a Sanity image URL builder instance.
  * Usage: urlFor(image).width(800).url()
  */
 export function urlFor(source: SanityImageSource) {
-  return builder.image(source);
+  return getBuilder().image(source);
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -128,7 +152,7 @@ export interface SanityFaq {
 
 /** Fetch all published blog posts, newest first. */
 export async function getAllPosts(): Promise<SanityPost[]> {
-  return sanityClient.fetch<SanityPost[]>(
+  return getSanityClient().fetch<SanityPost[]>(
     `*[_type == "post"] | order(publishedAt desc) {
       _id,
       title,
@@ -143,7 +167,7 @@ export async function getAllPosts(): Promise<SanityPost[]> {
 
 /** Fetch a single blog post by slug, including full content. */
 export async function getPostBySlug(slug: string): Promise<SanityPost | null> {
-  return sanityClient.fetch<SanityPost | null>(
+  return getSanityClient().fetch<SanityPost | null>(
     `*[_type == "post" && slug.current == $slug][0] {
       _id,
       title,
@@ -160,7 +184,7 @@ export async function getPostBySlug(slug: string): Promise<SanityPost | null> {
 
 /** Fetch all case studies, newest first. */
 export async function getAllCaseStudies(): Promise<SanityCaseStudy[]> {
-  return sanityClient.fetch<SanityCaseStudy[]>(
+  return getSanityClient().fetch<SanityCaseStudy[]>(
     `*[_type == "caseStudy"] | order(publishedAt desc) {
       _id,
       title,
@@ -177,7 +201,7 @@ export async function getAllCaseStudies(): Promise<SanityCaseStudy[]> {
 
 /** Fetch a single case study by slug, including all fields. */
 export async function getCaseStudyBySlug(slug: string): Promise<SanityCaseStudy | null> {
-  return sanityClient.fetch<SanityCaseStudy | null>(
+  return getSanityClient().fetch<SanityCaseStudy | null>(
     `*[_type == "caseStudy" && slug.current == $slug][0] {
       _id,
       title,
@@ -199,7 +223,7 @@ export async function getCaseStudyBySlug(slug: string): Promise<SanityCaseStudy 
 
 /** Fetch all services ordered by the 'order' field. */
 export async function getAllServices(): Promise<SanityService[]> {
-  return sanityClient.fetch<SanityService[]>(
+  return getSanityClient().fetch<SanityService[]>(
     `*[_type == "service"] | order(order asc) {
       _id,
       name,
@@ -220,7 +244,7 @@ export async function getAllTestimonials(featuredOnly = false): Promise<SanityTe
     ? `*[_type == "testimonial" && featured == true]`
     : `*[_type == "testimonial"]`;
 
-  return sanityClient.fetch<SanityTestimonial[]>(
+  return getSanityClient().fetch<SanityTestimonial[]>(
     `${filter} | order(order asc) {
       _id,
       authorName,
@@ -237,7 +261,7 @@ export async function getAllTestimonials(featuredOnly = false): Promise<SanityTe
 
 /** Fetch the singleton site configuration document. */
 export async function getSiteConfig(): Promise<SanitySiteConfig | null> {
-  return sanityClient.fetch<SanitySiteConfig | null>(
+  return getSanityClient().fetch<SanitySiteConfig | null>(
     `*[_type == "siteConfig" && _id == "siteConfig"][0] {
       _id,
       siteName,
@@ -255,7 +279,7 @@ export async function getSiteConfig(): Promise<SanitySiteConfig | null> {
 
 /** Fetch the singleton home page content (Hero + HowItWorks). */
 export async function getHomePage(): Promise<SanityHomePage | null> {
-  return sanityClient.fetch<SanityHomePage | null>(
+  return getSanityClient().fetch<SanityHomePage | null>(
     `*[_type == "homePage" && _id == "homePage"][0] {
       _id,
       heroHeadline,
@@ -276,7 +300,7 @@ export async function getHomePage(): Promise<SanityHomePage | null> {
 
 /** Fetch all FAQ items ordered by the 'order' field. */
 export async function getAllFaqs(): Promise<SanityFaq[]> {
-  return sanityClient.fetch<SanityFaq[]>(
+  return getSanityClient().fetch<SanityFaq[]>(
     `*[_type == "faq"] | order(order asc) {
       _id,
       question,
