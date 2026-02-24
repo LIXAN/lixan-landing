@@ -4,7 +4,8 @@
  * Conversion-optimized section order:
  *   Navbar → Hero → Services → HowItWorks → CaseStudies → Testimonials → FAQ → ContactForm → Footer
  */
-export const prerender = true;
+// SSR mode: fetches fresh Sanity data on every request.
+// Content changes in Studio appear immediately — no rebuild needed.
 
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/layout/Navbar.astro';
