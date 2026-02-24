@@ -4,36 +4,56 @@
  * Frequently asked questions accordion.
  * Removes final objections just before the contact form.
  * Uses native <details>/<summary> for zero-JS accessibility.
+ * Questions editable from Sanity Studio → "Preguntas Frecuentes".
  */
+import { getAllFaqs } from '../../lib/sanity';
+import type { SanityFaq } from '../../lib/sanity';
 
-const faqs = [
+const fallbackFaqs: SanityFaq[] = [
   {
-    // TODO: si quieren agregar rangos orientativos de precio, definirlos aquí
+    _id: '1',
     question: '¿Cuánto cuesta un proyecto?',
     answer:
       'Cada proyecto tiene precio fijo antes de empezar — lo que acordamos es lo que pagas. Los rangos varían según el alcance y los enviamos en la propuesta sin costo. No cobramos por hora ni agregamos costos al final.',
+    order: 1,
   },
   {
+    _id: '2',
     question: '¿Cuánto tarda un proyecto en terminarse?',
     answer:
       'Una landing page o automatización estándar: 2 a 3 semanas. Un sitio completo: 4 a 6 semanas. Los tiempos se definen en la propuesta y los cumplimos. Si hay un imprevisto, te avisamos antes, no después.',
+    order: 2,
   },
   {
+    _id: '3',
     question: '¿Qué pasa si el resultado no es lo que esperaba?',
     answer:
       'Todos los proyectos incluyen 30 días de ajustes post-entrega. El alcance queda definido por escrito antes de empezar, así que ambas partes saben exactamente qué esperar. Si algo no funciona como se acordó, lo corregimos sin costo adicional.',
+    order: 3,
   },
   {
+    _id: '4',
     question: '¿Necesito saber de tecnología para trabajar con ustedes?',
     answer:
       'No. Nos cuentas el problema de negocio y nosotros lo traducimos a una solución técnica. Al final te entregamos todo documentado para que puedas operarlo sin depender de nosotros.',
+    order: 4,
   },
   {
+    _id: '5',
     question: '¿Trabajan con empresas de cualquier tamaño?',
     answer:
       'Sí. La mayoría de nuestros clientes son PyMEs, startups y profesionales independientes que necesitan soluciones bien hechas sin los tiempos y costos de una agencia grande. Si tienes un problema concreto, podemos ayudarte.',
+    order: 5,
   },
 ];
+
+let faqs: SanityFaq[] = fallbackFaqs;
+try {
+  const fetched = await getAllFaqs();
+  if (fetched.length > 0) faqs = fetched;
+} catch {
+  // Sanity unavailable — using static fallback
+}
 ---
 
 <section id="faq" class="py-24 md:py-32" aria-labelledby="faq-heading">

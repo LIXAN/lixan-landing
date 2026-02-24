@@ -5,12 +5,38 @@
  * Layout: columna única centrada, full-viewport
  *   Fondo: BG_desktop.jpg (desktop) / BG_mobile.jpg (mobile)
  *   Capa de overlay oscuro → texto siempre legible
- *   Contenido: badge · headline · sub · CTAs · stats
+ *   Contenido: badge · headline · sub · CTAs
  *
- * Sin imagen decorativa secundaria.
+ * Texto editable desde Sanity Studio → "Página Principal".
  * Animaciones: CSS puro, staggered, respeta prefers-reduced-motion.
  * ─────────────────────────────────────────────────────────────
  */
+import { getHomePage } from '../../lib/sanity';
+
+// Static fallback if Sanity has no content yet
+const fallback = {
+  heroHeadline: 'Haz que tu negocio',
+  heroAccent:   'trabaje solo',
+  heroSubtitle: 'Construimos automatizaciones y sitios web que capturan leads y procesan tareas sin que intervenga nadie. Cosas concretas, bien hechas, que se entregan.',
+  heroCta1:     'Cuéntanos tu proyecto →',
+  heroCta2:     'Ver proyectos',
+};
+
+let hero = fallback;
+try {
+  const page = await getHomePage();
+  if (page) {
+    hero = {
+      heroHeadline: page.heroHeadline ?? fallback.heroHeadline,
+      heroAccent:   page.heroAccent   ?? fallback.heroAccent,
+      heroSubtitle: page.heroSubtitle ?? fallback.heroSubtitle,
+      heroCta1:     page.heroCta1     ?? fallback.heroCta1,
+      heroCta2:     page.heroCta2     ?? fallback.heroCta2,
+    };
+  }
+} catch {
+  // Sanity unavailable — using static fallback
+}
 ---
 
 <section class="hero" id="inicio" aria-label="Sección principal Lixan">
@@ -49,15 +75,13 @@
 
     <!-- Headline principal -->
     <h1 class="hero-headline">
-      Haz que tu negocio<br>
-      <span class="accent">trabaje solo</span>
+      {hero.heroHeadline}<br>
+      <span class="accent">{hero.heroAccent}</span>
     </h1>
 
     <!-- Subtítulo -->
     <p class="hero-sub">
-      Construimos automatizaciones y sitios web que capturan leads
-      y procesan tareas sin que intervenga nadie. Cosas concretas,
-      bien hechas, que se entregan.
+      {hero.heroSubtitle}
     </p>
 
     <!-- CTAs -->
@@ -67,15 +91,17 @@
         class="btn-primary"
         aria-label="Cuéntanos tu proyecto y agendamos una llamada"
       >
-        Cuéntanos tu proyecto →
+        {hero.heroCta1}
       </a>
-      <a
-        href="#casos"
-        class="btn-ghost"
-        aria-label="Ver proyectos realizados"
-      >
-        Ver proyectos
-      </a>
+      {hero.heroCta2 && (
+        <a
+          href="#casos"
+          class="btn-ghost"
+          aria-label="Ver proyectos realizados"
+        >
+          {hero.heroCta2}
+        </a>
+      )}
     </div>
 
   </div>

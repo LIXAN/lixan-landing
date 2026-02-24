@@ -9,6 +9,8 @@ import {
   testimonialSchema,
   siteConfigSchema,
   leadSchema,
+  homePageSchema,
+  faqSchema,
 } from './sanity/schemas';
 
 // These values are public (used in astro.config.mjs as well)
@@ -30,7 +32,7 @@ export default defineConfig({
           .items([
             // Singleton: Site Config
             S.listItem()
-              .title('Site Configuration')
+              .title('Configuración del sitio')
               .id('siteConfig')
               .child(
                 S.document()
@@ -38,13 +40,24 @@ export default defineConfig({
                   .documentId('siteConfig')
               ),
 
+            // Singleton: Home Page content
+            S.listItem()
+              .title('Página Principal (Hero + Proceso)')
+              .id('homePage')
+              .child(
+                S.document()
+                  .schemaType('homePage')
+                  .documentId('homePage')
+              ),
+
             S.divider(),
 
             // Regular document types
             S.listItem().title('Blog Posts').schemaType('post').child(S.documentTypeList('post')),
-            S.listItem().title('Case Studies').schemaType('caseStudy').child(S.documentTypeList('caseStudy')),
-            S.listItem().title('Services').schemaType('service').child(S.documentTypeList('service')),
-            S.listItem().title('Testimonials').schemaType('testimonial').child(S.documentTypeList('testimonial')),
+            S.listItem().title('Casos de Estudio').schemaType('caseStudy').child(S.documentTypeList('caseStudy')),
+            S.listItem().title('Servicios').schemaType('service').child(S.documentTypeList('service')),
+            S.listItem().title('Testimonios').schemaType('testimonial').child(S.documentTypeList('testimonial')),
+            S.listItem().title('Preguntas Frecuentes').schemaType('faq').child(S.documentTypeList('faq')),
 
             S.divider(),
 
@@ -55,6 +68,15 @@ export default defineConfig({
   ],
 
   schema: {
-    types: [postSchema, caseStudySchema, serviceSchema, testimonialSchema, siteConfigSchema, leadSchema],
+    types: [
+      postSchema,
+      caseStudySchema,
+      serviceSchema,
+      testimonialSchema,
+      siteConfigSchema,
+      leadSchema,
+      homePageSchema,
+      faqSchema,
+    ],
   },
 });

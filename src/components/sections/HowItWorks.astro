@@ -3,10 +3,14 @@
  * HowItWorks.astro
  * Step-by-step process section. Shows clients how working with Lixan looks.
  * Reduces friction and objections before the CTA.
+ * Steps are editable from Sanity Studio → "Página Principal".
  */
+import { getHomePage } from '../../lib/sanity';
+import type { SanityProcessStep } from '../../lib/sanity';
 
-const steps = [
+const fallbackSteps: SanityProcessStep[] = [
   {
+    _key: '1',
     number: '01',
     title: 'Diagnóstico',
     description:
@@ -14,6 +18,7 @@ const steps = [
     icon: '🎯',
   },
   {
+    _key: '2',
     number: '02',
     title: 'Propuesta',
     description:
@@ -21,6 +26,7 @@ const steps = [
     icon: '💡',
   },
   {
+    _key: '3',
     number: '03',
     title: 'Construcción',
     description:
@@ -28,6 +34,7 @@ const steps = [
     icon: '⚡',
   },
   {
+    _key: '4',
     number: '04',
     title: 'Entrega y soporte',
     description:
@@ -35,6 +42,16 @@ const steps = [
     icon: '🏆',
   },
 ];
+
+let steps: SanityProcessStep[] = fallbackSteps;
+try {
+  const page = await getHomePage();
+  if (page?.processSteps && page.processSteps.length > 0) {
+    steps = page.processSteps;
+  }
+} catch {
+  // Sanity unavailable — using static fallback
+}
 ---
 
 <section id="proceso" class="py-24 md:py-32 relative overflow-hidden" aria-labelledby="how-heading">

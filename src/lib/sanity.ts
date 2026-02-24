@@ -95,6 +95,31 @@ export interface SanitySiteConfig {
   ogImage?: SanityImageSource;
 }
 
+export interface SanityProcessStep {
+  _key: string;
+  number: string;
+  icon: string;
+  title: string;
+  description: string;
+}
+
+export interface SanityHomePage {
+  _id: string;
+  heroHeadline: string;
+  heroAccent: string;
+  heroSubtitle: string;
+  heroCta1: string;
+  heroCta2?: string;
+  processSteps: SanityProcessStep[];
+}
+
+export interface SanityFaq {
+  _id: string;
+  question: string;
+  answer: string;
+  order: number;
+}
+
 // ─────────────────────────────────────────────────────────────
 // GROQ queries
 // ─────────────────────────────────────────────────────────────
@@ -222,6 +247,39 @@ export async function getSiteConfig(): Promise<SanitySiteConfig | null> {
       instagram,
       twitter,
       ogImage
+    }`
+  );
+}
+
+/** Fetch the singleton home page content (Hero + HowItWorks). */
+export async function getHomePage(): Promise<SanityHomePage | null> {
+  return sanityClient.fetch<SanityHomePage | null>(
+    `*[_type == "homePage" && _id == "homePage"][0] {
+      _id,
+      heroHeadline,
+      heroAccent,
+      heroSubtitle,
+      heroCta1,
+      heroCta2,
+      processSteps[] {
+        _key,
+        number,
+        icon,
+        title,
+        description
+      }
+    }`
+  );
+}
+
+/** Fetch all FAQ items ordered by the 'order' field. */
+export async function getAllFaqs(): Promise<SanityFaq[]> {
+  return sanityClient.fetch<SanityFaq[]>(
+    `*[_type == "faq"] | order(order asc) {
+      _id,
+      question,
+      answer,
+      order
     }`
   );
 }

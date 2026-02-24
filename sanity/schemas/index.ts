@@ -5,3 +5,5 @@ export { serviceSchema } from './service';
 export { testimonialSchema } from './testimonial';
 export { siteConfigSchema } from './siteConfig';
 export { leadSchema } from './lead';
+export { homePageSchema } from './homePage';
+export { faqSchema } from './faq';
