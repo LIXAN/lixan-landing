@@ -1,0 +1,191 @@
+---
+/**
+ * privacidad.astro — Política de Privacidad
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/layout/Navbar.astro';
+import Footer from '../components/layout/Footer.astro';
+
+const lastUpdated = '24 de febrero de 2025';
+---
+
+<BaseLayout
+  title="Política de Privacidad"
+  description="Conoce cómo Lixan recopila, usa y protege tu información personal. Tu privacidad es importante para nosotros."
+>
+  <Navbar />
+
+  <main id="main-content" class="min-h-screen pt-24 pb-20">
+    <div class="container-lixan max-w-3xl mx-auto">
+
+      <!-- Header -->
+      <div class="mb-12" data-animate>
+        <span class="inline-block text-brand-400 text-sm font-semibold uppercase tracking-widest mb-3">
+          Legal
+        </span>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-text-primary mb-3">
+          Política de Privacidad
+        </h1>
+        <p class="text-text-muted text-sm">Última actualización: {lastUpdated}</p>
+      </div>
+
+      <!-- Content -->
+      <div class="prose-lixan space-y-10" data-animate>
+
+        <!-- 1 -->
+        <section>
+          <h2>1. Responsable del tratamiento</h2>
+          <p>
+            <strong>Lixan</strong> (en adelante, "la Empresa", "nosotros") es responsable del tratamiento de los datos personales recopilados a través del sitio web <strong>lixantech.com</strong>.
+          </p>
+          <p>
+            Contacto del responsable: <a href="mailto:hola@lixantech.com">hola@lixantech.com</a>
+          </p>
+        </section>
+
+        <!-- 2 -->
+        <section>
+          <h2>2. Datos que recopilamos</h2>
+          <p>Recopilamos únicamente los datos que tú nos proporcionas de forma voluntaria:</p>
+          <ul>
+            <li><strong>Formulario de contacto:</strong> nombre, correo electrónico, empresa (opcional), servicio de interés y mensaje.</li>
+            <li><strong>Chat del asistente:</strong> nombre, correo electrónico, teléfono (si los proporcionas en la conversación) y resumen de tu consulta.</li>
+          </ul>
+          <p>
+            No recopilamos datos de pago, documentos de identidad ni información sensible de ningún tipo.
+          </p>
+        </section>
+
+        <!-- 3 -->
+        <section>
+          <h2>3. Finalidad y base legal</h2>
+          <p>Usamos tus datos exclusivamente para:</p>
+          <ul>
+            <li>Responder a tu consulta o solicitud de servicio.</li>
+            <li>Enviarte información comercial relacionada con los servicios que solicitaste (solo si nos lo autorizas).</li>
+            <li>Mejorar la calidad de nuestro servicio de atención al cliente.</li>
+          </ul>
+          <p>
+            La base legal del tratamiento es el <strong>consentimiento informado</strong> que otorgas al enviarnos tus datos a través del formulario o el chat.
+          </p>
+        </section>
+
+        <!-- 4 -->
+        <section>
+          <h2>4. Almacenamiento y seguridad</h2>
+          <p>
+            Tus datos se almacenan en <strong>Sanity.io</strong> (CMS seguro con infraestructura en la nube) y eventualmente como notificación por correo electrónico interno. Aplicamos medidas técnicas y organizativas razonables para proteger tu información contra accesos no autorizados, pérdida o alteración.
+          </p>
+          <p>
+            No vendemos, cedemos ni compartimos tus datos personales con terceros con fines comerciales.
+          </p>
+        </section>
+
+        <!-- 5 -->
+        <section>
+          <h2>5. Conservación de los datos</h2>
+          <p>
+            Conservamos tus datos durante el tiempo necesario para gestionar tu solicitud y, en su caso, durante la relación comercial. Si no existe relación comercial, los datos se eliminan a los <strong>12 meses</strong> desde su captura, salvo obligación legal en contrario.
+          </p>
+        </section>
+
+        <!-- 6 -->
+        <section>
+          <h2>6. Tus derechos</h2>
+          <p>Tienes derecho a:</p>
+          <ul>
+            <li><strong>Acceder</strong> a los datos personales que tenemos sobre ti.</li>
+            <li><strong>Rectificar</strong> datos inexactos o incompletos.</li>
+            <li><strong>Suprimir</strong> tus datos ("derecho al olvido").</li>
+            <li><strong>Limitar u oponerte</strong> al tratamiento de tus datos.</li>
+            <li><strong>Retirar tu consentimiento</strong> en cualquier momento, sin que ello afecte a la licitud del tratamiento previo.</li>
+          </ul>
+          <p>
+            Para ejercer cualquiera de estos derechos escríbenos a <a href="mailto:hola@lixantech.com">hola@lixantech.com</a> indicando tu nombre completo y la solicitud. Responderemos en un plazo máximo de <strong>15 días hábiles</strong>.
+          </p>
+        </section>
+
+        <!-- 7 -->
+        <section>
+          <h2>7. Cookies y tecnologías de rastreo</h2>
+          <p>
+            Este sitio no utiliza cookies de rastreo ni publicidad. Pueden existir cookies técnicas estrictamente necesarias para el funcionamiento de la página (por ejemplo, para el correcto rendimiento del servidor). No se comparte información con redes publicitarias.
+          </p>
+        </section>
+
+        <!-- 8 -->
+        <section>
+          <h2>8. Cambios en esta política</h2>
+          <p>
+            Podemos actualizar esta política ocasionalmente. Publicaremos la versión actualizada en esta misma página con la fecha de última revisión. El uso continuado del sitio tras la publicación de cambios implica la aceptación de los mismos.
+          </p>
+        </section>
+
+        <!-- 9 -->
+        <section>
+          <h2>9. Contacto</h2>
+          <p>
+            Si tienes preguntas sobre esta política o sobre el tratamiento de tus datos, contáctanos:
+          </p>
+          <ul>
+            <li>Email: <a href="mailto:hola@lixantech.com">hola@lixantech.com</a></li>
+            <li>WhatsApp: <a href="https://wa.me/573124843933" target="_blank" rel="noopener noreferrer">+57 312 484 3933</a></li>
+          </ul>
+        </section>
+
+      </div>
+
+      <!-- Back link -->
+      <div class="mt-16 pt-8 border-t border-surface-700" data-animate>
+        <a
+          href="/"
+          class="inline-flex items-center gap-2 text-sm text-brand-400 hover:text-brand-300 transition-colors"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+          </svg>
+          Volver al inicio
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .prose-lixan h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-text-primary, #f0eeff);
+    margin-bottom: 0.75rem;
+  }
+  .prose-lixan p {
+    color: var(--color-text-secondary, #a89fc8);
+    line-height: 1.75;
+    margin-bottom: 0.75rem;
+  }
+  .prose-lixan ul {
+    list-style: disc;
+    padding-left: 1.5rem;
+    color: var(--color-text-secondary, #a89fc8);
+    line-height: 1.75;
+    margin-bottom: 0.75rem;
+  }
+  .prose-lixan ul li {
+    margin-bottom: 0.4rem;
+  }
+  .prose-lixan a {
+    color: #a678ff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .prose-lixan a:hover {
+    color: #c4a4ff;
+  }
+  .prose-lixan strong {
+    color: var(--color-text-primary, #f0eeff);
+    font-weight: 600;
+  }
+</style>
