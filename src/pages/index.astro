@@ -20,7 +20,6 @@ import FAQ from '../components/sections/FAQ.astro';
 
 // React islands — loaded on the client
 import ContactForm from '../components/sections/ContactForm';
-import CalBooking from '../components/sections/CalBooking';
 ---
 
 <BaseLayout
@@ -49,33 +48,7 @@ import CalBooking from '../components/sections/CalBooking';
     <!-- ─── 6. FAQ — Elimina objeciones finales ─── -->
     <FAQ />
 
-    <!-- ─── 7. Booking — Cal.com inline calendar ─── -->
-    <section id="agendar" class="py-24 md:py-32 relative" aria-labelledby="booking-heading">
-      <div aria-hidden="true" class="pointer-events-none absolute inset-0">
-        <div class="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-brand-500/10 blur-[100px]"></div>
-      </div>
-
-      <div class="container-lixan relative z-10">
-        <div class="text-center mb-12">
-          <span class="inline-block text-brand-400 text-sm font-semibold uppercase tracking-widest mb-3">
-            Agenda tu llamada
-          </span>
-          <h2 id="booking-heading" class="text-3xl sm:text-4xl font-extrabold mb-4">
-            30 minutos, <span class="gradient-text">sin compromiso</span>
-          </h2>
-          <p class="text-text-secondary max-w-md mx-auto">
-            Una conversación para entender tu situación y ver si encajamos. Sin demo de ventas, sin presión.
-          </p>
-        </div>
-
-        <!-- Cal.com inline embed — React island -->
-        <div class="max-w-4xl mx-auto">
-          <CalBooking mode="inline" client:load />
-        </div>
-      </div>
-    </section>
-
-    <!-- ─── 8. Contact Form — CTA final de conversión ─── -->
+    <!-- ─── 7. Contact Form — CTA final de conversión ─── -->
     <section id="contacto" class="py-24 md:py-32 relative" aria-labelledby="contact-heading">
       <!-- Background glow -->
       <div aria-hidden="true" class="pointer-events-none absolute inset-0">
