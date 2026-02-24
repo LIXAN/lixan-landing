@@ -6,11 +6,13 @@ import type { SanityImageSource } from '@sanity/image-url';
 // Client initialisation
 // ─────────────────────────────────────────────────────────────
 export const sanityClient = createClient({
-  projectId: import.meta.env.SANITY_PROJECT_ID,
-  dataset: import.meta.env.SANITY_DATASET ?? 'production',
-  apiVersion: '2024-01-01', // use today's date or a fixed recent date
-  token: import.meta.env.SANITY_API_TOKEN,
-  useCdn: import.meta.env.PROD, // use CDN in production, always-fresh in dev
+  // process.env works at build-time (pre-render) and runtime on Vercel.
+  // import.meta.env works in dev. Both fallbacks ensure it never crashes.
+  projectId: process.env.SANITY_PROJECT_ID ?? import.meta.env.SANITY_PROJECT_ID ?? 'dbxx60js',
+  dataset:   process.env.SANITY_DATASET   ?? import.meta.env.SANITY_DATASET   ?? 'production',
+  apiVersion: '2024-01-01',
+  token: process.env.SANITY_API_TOKEN ?? import.meta.env.SANITY_API_TOKEN,
+  useCdn: import.meta.env.PROD,
 });
 
 // ─────────────────────────────────────────────────────────────
