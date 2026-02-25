@@ -3,7 +3,19 @@
  * Footer.astro
  * Site footer with links, social icons and legal copy.
  */
+import { getSiteConfig } from '../../lib/sanity';
+
 const currentYear = new Date().getFullYear();
+
+let email = 'hola@lixantech.com';
+let whatsapp = 'https://wa.me/573124843933';
+try {
+  const config = await getSiteConfig();
+  if (config?.email) email = config.email;
+  if (config?.whatsapp) whatsapp = config.whatsapp.startsWith('http') ? config.whatsapp : `https://wa.me/${config.whatsapp.replace(/\D/g, '')}`;
+} catch {
+  // Sanity not configured — using defaults
+}
 
 const footerLinks = {
   company: [
@@ -104,14 +116,12 @@ const socialLinks = [
         <h3 class="text-sm font-semibold text-text-primary uppercase tracking-widest mb-4">Contacto</h3>
         <ul class="space-y-3 text-sm text-text-muted">
           <li>
-            <!-- TODO: replace with real email from siteConfig -->
-            <a href="mailto:hola@lixantech.com" class="hover:text-brand-400 transition-colors">
-              hola@lixantech.com
+            <a href={`mailto:${email}`} class="hover:text-brand-400 transition-colors">
+              {email}
             </a>
           </li>
           <li>
-            <!-- TODO: replace with WhatsApp from siteConfig -->
-            <a href="https://wa.me/573124843933" class="hover:text-brand-400 transition-colors" target="_blank" rel="noopener noreferrer">
+            <a href={whatsapp} class="hover:text-brand-400 transition-colors" target="_blank" rel="noopener noreferrer">
               WhatsApp
             </a>
           </li>
