@@ -89,11 +89,11 @@ const caseSchema = {
 
       <!-- ── Cover image ── -->
       {caseStudy.coverImage ? (
-        <div class="w-full h-64 rounded-brand overflow-hidden bg-surface-800 mb-10 flex items-center justify-center">
+        <div class="w-full rounded-brand overflow-hidden bg-surface-800 mb-10">
           <img
             src={urlFor(caseStudy.coverImage).width(900).url()}
             alt={(caseStudy.coverImage as any).alt ?? caseStudy.title}
-            class="w-full h-full object-contain"
+            class="w-full h-auto"
             loading="eager"
             decoding="async"
           />
