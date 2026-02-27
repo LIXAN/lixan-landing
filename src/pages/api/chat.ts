@@ -46,7 +46,7 @@ GARANTÍAS Y DIFERENCIADORES
 CONTACTO Y CANALES PRINCIPALES
 - WhatsApp (canal preferido): https://wa.me/573124843933 — para consultas rápidas y arrancar conversaciones
 - Agendar o contactar: formulario de contacto en la sección #contacto de la página
-- Email: hola@lixantech.com
+- Email: admin.2026@lixantech.com
 - Instagram: @lixan_col
 
 INSTRUCCIONES DE COMPORTAMIENTO

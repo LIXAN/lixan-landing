@@ -96,7 +96,7 @@ function escapeHtml(str: string): string {
  */
 export async function sendLeadEmail(payload: LeadEmailPayload): Promise<SendEmailResult> {
   const from = import.meta.env.RESEND_FROM_EMAIL ?? 'noreply@lixantech.com';
-  const to = import.meta.env.LEAD_RECIPIENT_EMAIL ?? 'hola@lixantech.com';
+  const to = import.meta.env.LEAD_RECIPIENT_EMAIL ?? 'admin.2026@lixantech.com';
 
   try {
     const resend = getResendClient();

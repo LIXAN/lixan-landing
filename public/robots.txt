@@ -8,4 +8,4 @@ Disallow: /api/
 Disallow: /studio/
 
 # Sitemap location
-Sitemap: https://lixan.co/sitemap-index.xml
+Sitemap: https://www.lixantech.com/sitemap-index.xml
