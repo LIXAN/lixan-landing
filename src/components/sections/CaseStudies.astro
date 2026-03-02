@@ -3,6 +3,7 @@
  * CaseStudies.astro
  * Social proof section showcasing featured client projects.
  * Data is loaded from Sanity; placeholders used until CMS is configured.
+ * Layout: infinite auto-scroll horizontal carousel (marquee).
  */
 import { getAllCaseStudies, urlFor } from '../../lib/sanity';
 import type { SanityCaseStudy } from '../../lib/sanity';
@@ -63,17 +64,20 @@ const industryLabels: Record<string, string> = {
 let cases: Partial<SanityCaseStudy>[] = placeholders;
 try {
   const fetched = await getAllCaseStudies();
-  if (fetched.length > 0) cases = fetched.filter((c) => c.featured).slice(0, 3);
+  if (fetched.length > 0) cases = fetched.filter((c) => c.featured);
 } catch {
   // Sanity not configured — using placeholders
 }
+
+// Duplicate for seamless infinite loop: animate translateX(0 → -50%)
+const track = [...cases, ...cases];
 ---
 
 <section id="casos" class="py-24 md:py-32" aria-labelledby="cases-heading">
-  <div class="container-lixan">
 
-    <!-- ── Section header ── -->
-    <div class="text-center mb-16" data-animate>
+  <!-- ── Section header (contained) ── -->
+  <div class="container-lixan mb-16">
+    <div class="text-center" data-animate>
       <span class="inline-block text-brand-400 text-sm font-semibold uppercase tracking-widest mb-3">
         Proyectos
       </span>
@@ -84,14 +88,15 @@ try {
         Casos reales, sin métricas inventadas.
       </p>
     </div>
+  </div>
 
-    <!-- ── Case cards grid ── -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-      {cases.map((c, i) => (
+  <!-- ── Carousel (full-width) ── -->
+  <div class="carousel-mask" role="region" aria-label="Proyectos destacados">
+    <div class="carousel-track">
+      {track.map((c, i) => (
         <article
-          data-animate="scale"
-          style={`--ad: ${i * 90}ms`}
-          class="group relative flex flex-col rounded-brand border border-surface-700 bg-surface-900 overflow-hidden hover:border-brand-500/40 hover:shadow-[0_0_32px_rgba(109,61,247,0.22)] transition-all duration-300 hover:-translate-y-1"
+          aria-hidden={i >= cases.length ? 'true' : undefined}
+          class="carousel-card group relative flex flex-col rounded-brand border border-surface-700 bg-surface-900 overflow-hidden hover:border-brand-500/40 hover:shadow-[0_0_32px_rgba(109,61,247,0.22)] transition-all duration-300 hover:-translate-y-1"
         >
 
           <!-- Cover image -->
@@ -142,6 +147,7 @@ try {
               <a
                 href={`/casos/${c.slug.current}`}
                 class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-400 hover:text-brand-300 transition-colors"
+                tabindex={i >= cases.length ? -1 : 0}
               >
                 Ver caso completo
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -154,6 +160,63 @@ try {
         </article>
       ))}
     </div>
-
   </div>
+
 </section>
+
+<style>
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  .carousel-mask {
+    overflow: hidden;
+    /* Lateral fade effect */
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 8%,
+      black 92%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 8%,
+      black 92%,
+      transparent 100%
+    );
+  }
+
+  .carousel-track {
+    display: flex;
+    gap: 1.5rem;
+    width: max-content;
+    padding: 1rem 1.5rem 2rem;
+    animation: marquee 35s linear infinite;
+  }
+
+  /* Pause on hover */
+  .carousel-mask:hover .carousel-track {
+    animation-play-state: paused;
+  }
+
+  .carousel-card {
+    width: 320px;
+    flex-shrink: 0;
+  }
+
+  /* Reduced motion: stop animation, allow manual scroll */
+  @media (prefers-reduced-motion: reduce) {
+    .carousel-mask {
+      -webkit-mask-image: none;
+      mask-image: none;
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+    .carousel-track {
+      animation: none;
+    }
+  }
+</style>
