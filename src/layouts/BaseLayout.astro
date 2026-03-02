@@ -169,9 +169,41 @@ const articleSchema = isArticle ? {
 
     <!-- Named slot: page-specific head tags (extra schemas, preloads, etc.) -->
     <slot name="head" />
+
+    <!-- ── Loading screen styles ── -->
+    <style>
+      #loader {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: #08080f;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.5s ease, visibility 0.5s ease;
+      }
+      #loader img {
+        width: 140px;
+        height: auto;
+        animation: loader-pulse 1.4s ease-in-out infinite;
+      }
+      @keyframes loader-pulse {
+        0%, 100% { opacity: 1;   transform: scale(1); }
+        50%       { opacity: 0.5; transform: scale(0.96); }
+      }
+      #loader.loader-out {
+        opacity: 0;
+        visibility: hidden;
+      }
+    </style>
   </head>
 
   <body>
+    <!-- ── Loading screen ── -->
+    <div id="loader" aria-hidden="true">
+      <img src="/images/LixanLogo.svg" alt="" width="140" height="40" />
+    </div>
+
     <!-- Scroll to top on every page load / refresh -->
     <script is:inline>
       if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
@@ -183,6 +215,24 @@ const articleSchema = isArticle ? {
 
     <!-- ── Floating AI chat widget — renders on all pages ── -->
     <ChatWidget client:load />
+
+    <!-- ── Loading screen dismiss ── -->
+    <script is:inline>
+      (function () {
+        var loader = document.getElementById('loader');
+        function hide() {
+          loader.classList.add('loader-out');
+          loader.addEventListener('transitionend', function () {
+            loader.style.display = 'none';
+          }, { once: true });
+        }
+        if (document.readyState === 'complete') {
+          hide();
+        } else {
+          window.addEventListener('load', hide);
+        }
+      })();
+    </script>
 
     <!-- ── Scroll-reveal IntersectionObserver (is:inline avoids Astro bundling) ── -->
     <script is:inline>
