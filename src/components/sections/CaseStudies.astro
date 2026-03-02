@@ -2,8 +2,7 @@
 /**
  * CaseStudies.astro
  * Social proof section showcasing featured client projects.
- * Data is loaded from Sanity; placeholders used until CMS is configured.
- * Layout: infinite auto-scroll horizontal carousel (marquee).
+ * Layout: infinite snap carousel with prev/next arrows, 3 cards visible.
  */
 import { getAllCaseStudies, urlFor } from '../../lib/sanity';
 import type { SanityCaseStudy } from '../../lib/sanity';
@@ -12,7 +11,6 @@ import type { SanityCaseStudy } from '../../lib/sanity';
 const placeholders: Partial<SanityCaseStudy>[] = [
   {
     _id: '1',
-    // Agencia de marketing — automatización de reportes
     title: 'Automatización de reportes semanales de clientes',
     client: 'Agencia de marketing digital',
     industry: 'marketing',
@@ -26,8 +24,6 @@ const placeholders: Partial<SanityCaseStudy>[] = [
   },
   {
     _id: '2',
-    // Consultoría B2B — landing page
-    // TODO: confirmar que la tasa de contacto 3.1% es representativa de un proyecto real
     title: 'Landing page de captación para servicio B2B',
     client: 'Consultoría de procesos B2B',
     industry: 'saas',
@@ -41,7 +37,6 @@ const placeholders: Partial<SanityCaseStudy>[] = [
   },
   {
     _id: '3',
-    // E-commerce — chatbot de soporte IA
     title: 'Asistente IA para consultas frecuentes de clientes',
     client: 'Tienda online de indumentaria',
     industry: 'ecommerce',
@@ -68,16 +63,13 @@ try {
 } catch {
   // Sanity not configured — using placeholders
 }
-
-// Duplicate for seamless infinite loop: animate translateX(0 → -50%)
-const track = [...cases, ...cases];
 ---
 
 <section id="casos" class="py-24 md:py-32" aria-labelledby="cases-heading">
+  <div class="container-lixan">
 
-  <!-- ── Section header (contained) ── -->
-  <div class="container-lixan mb-16">
-    <div class="text-center" data-animate>
+    <!-- ── Section header ── -->
+    <div class="text-center mb-16" data-animate>
       <span class="inline-block text-brand-400 text-sm font-semibold uppercase tracking-widest mb-3">
         Proyectos
       </span>
@@ -88,135 +80,251 @@ const track = [...cases, ...cases];
         Casos reales, sin métricas inventadas.
       </p>
     </div>
-  </div>
 
-  <!-- ── Carousel (full-width) ── -->
-  <div class="carousel-mask" role="region" aria-label="Proyectos destacados">
-    <div class="carousel-track">
-      {track.map((c, i) => (
-        <article
-          aria-hidden={i >= cases.length ? 'true' : undefined}
-          class="carousel-card group relative flex flex-col rounded-brand border border-surface-700 bg-surface-900 overflow-hidden hover:border-brand-500/40 hover:shadow-[0_0_32px_rgba(109,61,247,0.22)] transition-all duration-300 hover:-translate-y-1"
-        >
+    <!-- ── Carousel ── -->
+    <div class="casos-root" role="region" aria-label="Proyectos destacados" aria-roledescription="carrusel">
 
-          <!-- Cover image -->
-          {c.coverImage ? (
-            <div class="h-44 bg-surface-800 flex items-center justify-center overflow-hidden">
-              <img
-                src={urlFor(c.coverImage).width(600).url()}
-                alt={(c.coverImage as any).alt ?? c.title ?? ''}
-                class="w-full h-full object-contain"
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-          ) : (
-            <div class="h-44 bg-gradient-to-br from-surface-800 to-brand-950/40 flex items-center justify-center">
-              <span class="text-4xl" aria-hidden="true">🏆</span>
-            </div>
-          )}
+      <!-- Prev button -->
+      <button
+        id="casos-prev"
+        aria-label="Proyecto anterior"
+        class="casos-btn"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5" aria-hidden="true">
+          <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+        </svg>
+      </button>
 
-          <!-- Body -->
-          <div class="p-6 flex flex-col flex-1">
-            <!-- Industry badge -->
-            {c.industry && (
-              <span class="self-start text-xs font-medium px-2.5 py-1 rounded-pill bg-surface-700 text-text-muted mb-3">
-                {industryLabels[c.industry] ?? c.industry}
-              </span>
-            )}
+      <!-- Viewport -->
+      <div id="casos-viewport" class="casos-viewport">
+        <div id="casos-track" class="casos-track">
+          {cases.map((c) => (
+            <article class="casos-card group relative flex flex-col rounded-brand border border-surface-700 bg-surface-900 overflow-hidden hover:border-brand-500/40 hover:shadow-[0_0_32px_rgba(109,61,247,0.22)] transition-all duration-300 hover:-translate-y-1">
 
-            <h3 class="text-base font-bold text-text-primary mb-1">{c.title}</h3>
-            <p class="text-xs text-text-muted mb-4">{c.client}</p>
+              <!-- Cover image -->
+              {c.coverImage ? (
+                <div class="h-44 bg-surface-800 flex items-center justify-center overflow-hidden">
+                  <img
+                    src={urlFor(c.coverImage).width(600).url()}
+                    alt={(c.coverImage as any).alt ?? c.title ?? ''}
+                    class="w-full h-full object-contain"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+              ) : (
+                <div class="h-44 bg-gradient-to-br from-surface-800 to-brand-950/40 flex items-center justify-center">
+                  <span class="text-4xl" aria-hidden="true">🏆</span>
+                </div>
+              )}
 
-            <!-- Results list -->
-            {c.results && c.results.length > 0 && (
-              <ul class="space-y-1.5">
-                {c.results.map((result) => (
-                  <li class="flex items-center gap-2 text-sm text-text-secondary">
-                    <svg class="w-4 h-4 text-brand-400 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              <!-- Body -->
+              <div class="p-6 flex flex-col flex-1">
+                {c.industry && (
+                  <span class="self-start text-xs font-medium px-2.5 py-1 rounded-pill bg-surface-700 text-text-muted mb-3">
+                    {industryLabels[c.industry] ?? c.industry}
+                  </span>
+                )}
+
+                <h3 class="text-base font-bold text-text-primary mb-1">{c.title}</h3>
+                <p class="text-xs text-text-muted mb-4">{c.client}</p>
+
+                {c.results && c.results.length > 0 && (
+                  <ul class="space-y-1.5">
+                    {c.results.map((result) => (
+                      <li class="flex items-center gap-2 text-sm text-text-secondary">
+                        <svg class="w-4 h-4 text-brand-400 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        {result}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {c.slug?.current && (
+                  <a
+                    href={`/casos/${c.slug.current}`}
+                    class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-400 hover:text-brand-300 transition-colors"
+                  >
+                    Ver caso completo
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
                     </svg>
-                    {result}
-                  </li>
-                ))}
-              </ul>
-            )}
+                  </a>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
 
-            <!-- CTA button -->
-            {c.slug?.current && (
-              <a
-                href={`/casos/${c.slug.current}`}
-                class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-400 hover:text-brand-300 transition-colors"
-                tabindex={i >= cases.length ? -1 : 0}
-              >
-                Ver caso completo
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                </svg>
-              </a>
-            )}
+      <!-- Next button -->
+      <button
+        id="casos-next"
+        aria-label="Proyecto siguiente"
+        class="casos-btn"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5" aria-hidden="true">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+        </svg>
+      </button>
 
-          </div>
-        </article>
-      ))}
     </div>
   </div>
-
 </section>
 
 <style>
-  @keyframes marquee {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
+  .casos-root {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
   }
 
-  .carousel-mask {
+  .casos-btn {
+    flex-shrink: 0;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    border: 1px solid var(--color-surface-600, #3a3a5c);
+    background: var(--color-surface-800, #1a1a2e);
+    color: var(--color-text-muted, #9090b0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+  .casos-btn:hover {
+    border-color: var(--color-brand-500, #6d3df7);
+    color: var(--color-brand-400, #855dff);
+    background: var(--color-surface-700, #252540);
+  }
+  .casos-btn:focus-visible {
+    outline: 2px solid var(--color-brand-500, #6d3df7);
+    outline-offset: 2px;
+  }
+
+  .casos-viewport {
     overflow: hidden;
-    /* Lateral fade effect */
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      black 8%,
-      black 92%,
-      transparent 100%
-    );
-    mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      black 8%,
-      black 92%,
-      transparent 100%
-    );
+    flex: 1;
+    min-width: 0;
   }
 
-  .carousel-track {
+  .casos-track {
     display: flex;
     gap: 1.5rem;
-    width: max-content;
-    padding: 1rem 1.5rem 2rem;
-    animation: marquee 35s linear infinite;
+    /* transition added by JS to avoid flash on init */
   }
 
-  /* Pause on hover */
-  .carousel-mask:hover .carousel-track {
-    animation-play-state: paused;
-  }
-
-  .carousel-card {
-    width: 320px;
+  .casos-card {
+    /* Width set by JS based on viewport */
     flex-shrink: 0;
   }
-
-  /* Reduced motion: stop animation, allow manual scroll */
-  @media (prefers-reduced-motion: reduce) {
-    .carousel-mask {
-      -webkit-mask-image: none;
-      mask-image: none;
-      overflow-x: auto;
-      scrollbar-width: thin;
-    }
-    .carousel-track {
-      animation: none;
-    }
-  }
 </style>
+
+<script>
+  const viewport = document.getElementById('casos-viewport')!;
+  const track    = document.getElementById('casos-track')!;
+  const prevBtn  = document.getElementById('casos-prev')!;
+  const nextBtn  = document.getElementById('casos-next')!;
+
+  const GAP_REM  = 1.5; // matches gap in CSS (1.5rem)
+  const origCards = [...track.children] as HTMLElement[];
+  const N        = origCards.length;
+
+  if (N === 0) {
+    prevBtn.setAttribute('disabled', '');
+    nextBtn.setAttribute('disabled', '');
+  } else {
+    // Clone all cards at start and end for infinite loop
+    const startClones = origCards.map(c => { const cl = c.cloneNode(true) as HTMLElement; cl.setAttribute('aria-hidden', 'true'); return cl; });
+    const endClones   = origCards.map(c => { const cl = c.cloneNode(true) as HTMLElement; cl.setAttribute('aria-hidden', 'true'); return cl; });
+    startClones.forEach(c => track.prepend(c));
+    endClones.forEach(c => track.append(c));
+
+    let current      = N; // index of first real card (after start clones)
+    let busy         = false;
+
+    function getVisible(): number {
+      const w = viewport.clientWidth;
+      if (w < 640) return 1;
+      if (w < 1024) return 2;
+      return 3;
+    }
+
+    function getGap(): number {
+      return GAP_REM * parseFloat(getComputedStyle(document.documentElement).fontSize);
+    }
+
+    function getCardWidth(): number {
+      const vis = getVisible();
+      const gap = getGap();
+      return (viewport.clientWidth - (vis - 1) * gap) / vis;
+    }
+
+    function applyWidths() {
+      const w = getCardWidth();
+      ;(track.children as unknown as HTMLElement[]).forEach ? null : null;
+      for (const c of track.children as unknown as HTMLCollectionOf<HTMLElement>) {
+        c.style.width = w + 'px';
+      }
+    }
+
+    function offsetFor(index: number): number {
+      return index * (getCardWidth() + getGap());
+    }
+
+    function moveTo(index: number, animated: boolean) {
+      track.style.transition = animated ? 'transform 0.45s cubic-bezier(0.16,1,0.3,1)' : 'none';
+      track.style.transform  = `translateX(-${offsetFor(index)}px)`;
+      current = index;
+    }
+
+    // Init (no animation)
+    applyWidths();
+    moveTo(current, false);
+
+    track.addEventListener('transitionend', () => {
+      // Teleport to real card when landing on a clone
+      if (current < N) {
+        moveTo(current + N, false);
+      } else if (current >= N * 2) {
+        moveTo(current - N, false);
+      }
+      busy = false;
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (busy) return;
+      busy = true;
+      moveTo(current + 1, true);
+    });
+
+    prevBtn.addEventListener('click', () => {
+      if (busy) return;
+      busy = true;
+      moveTo(current - 1, true);
+    });
+
+    // Keyboard support
+    document.addEventListener('keydown', (e) => {
+      if (!document.getElementById('casos')) return;
+      if (e.key === 'ArrowRight') nextBtn.click();
+      if (e.key === 'ArrowLeft')  prevBtn.click();
+    });
+
+    // Touch / swipe support
+    let touchStartX = 0;
+    viewport.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+    viewport.addEventListener('touchend', (e) => {
+      const dx = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(dx) > 40) dx > 0 ? nextBtn.click() : prevBtn.click();
+    }, { passive: true });
+
+    window.addEventListener('resize', () => {
+      applyWidths();
+      moveTo(current, false);
+    });
+  }
+</script>
