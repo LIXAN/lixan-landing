@@ -245,6 +245,8 @@ try {
 
     let current      = N; // index of first real card (after start clones)
     let busy         = false;
+    const AUTOPLAY_MS = 3500;
+    let autoTimer: ReturnType<typeof setInterval> | null = null;
 
     function getVisible(): number {
       const w = viewport.clientWidth;
@@ -265,7 +267,6 @@ try {
 
     function applyWidths() {
       const w = getCardWidth();
-      ;(track.children as unknown as HTMLElement[]).forEach ? null : null;
       for (const c of track.children as unknown as HTMLCollectionOf<HTMLElement>) {
         c.style.width = w + 'px';
       }
@@ -281,9 +282,21 @@ try {
       current = index;
     }
 
+    function startAutoplay() {
+      if (autoTimer) return;
+      autoTimer = setInterval(() => {
+        if (!busy) { busy = true; moveTo(current + 1, true); }
+      }, AUTOPLAY_MS);
+    }
+
+    function stopAutoplay() {
+      if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+    }
+
     // Init (no animation)
     applyWidths();
     moveTo(current, false);
+    startAutoplay();
 
     track.addEventListener('transitionend', () => {
       // Teleport to real card when landing on a clone
@@ -298,14 +311,23 @@ try {
     nextBtn.addEventListener('click', () => {
       if (busy) return;
       busy = true;
+      stopAutoplay();
+      startAutoplay(); // reset timer on manual nav
       moveTo(current + 1, true);
     });
 
     prevBtn.addEventListener('click', () => {
       if (busy) return;
       busy = true;
+      stopAutoplay();
+      startAutoplay();
       moveTo(current - 1, true);
     });
+
+    // Pause on hover
+    const root = document.querySelector('.casos-root')!;
+    root.addEventListener('mouseenter', stopAutoplay);
+    root.addEventListener('mouseleave', startAutoplay);
 
     // Keyboard support
     document.addEventListener('keydown', (e) => {
@@ -321,6 +343,11 @@ try {
       const dx = touchStartX - e.changedTouches[0].clientX;
       if (Math.abs(dx) > 40) dx > 0 ? nextBtn.click() : prevBtn.click();
     }, { passive: true });
+
+    // Pause when tab is hidden
+    document.addEventListener('visibilitychange', () => {
+      document.hidden ? stopAutoplay() : startAutoplay();
+    });
 
     window.addEventListener('resize', () => {
       applyWidths();
