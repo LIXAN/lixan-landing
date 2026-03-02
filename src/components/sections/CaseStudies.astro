@@ -277,7 +277,7 @@ try {
     }
 
     function moveTo(index: number, animated: boolean) {
-      track.style.transition = animated ? 'transform 0.45s cubic-bezier(0.16,1,0.3,1)' : 'none';
+      track.style.transition = animated ? 'transform 0.7s ease-in-out' : 'none';
       track.style.transform  = `translateX(-${offsetFor(index)}px)`;
       current = index;
     }
