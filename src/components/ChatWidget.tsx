@@ -97,7 +97,7 @@ export default function ChatWidget() {
           role="dialog"
           aria-label="Chat con asistente Lixan"
           aria-modal="true"
-          className="fixed bottom-0 left-0 right-0 sm:bottom-24 sm:left-auto sm:right-5 z-[200] w-full sm:w-[340px] flex flex-col rounded-t-2xl sm:rounded-2xl border border-surface-700 bg-surface-900 shadow-2xl shadow-black/50 overflow-hidden"
+          className="fixed bottom-0 left-0 right-0 sm:bottom-24 sm:left-auto sm:right-5 z-[199] w-full sm:w-[340px] flex flex-col rounded-t-2xl sm:rounded-2xl border border-surface-700 bg-surface-900 shadow-2xl shadow-black/50 overflow-hidden"
           style={{ maxHeight: 'min(80svh, calc(100svh - 4.5rem))' }}
         >
           {/* Header */}
@@ -196,7 +196,8 @@ export default function ChatWidget() {
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? 'Cerrar chat' : 'Abrir chat con asistente'}
         aria-expanded={open}
-        className="fixed bottom-5 right-5 z-[200] w-14 h-14 rounded-full bg-brand-500 hover:bg-brand-400 text-white shadow-lg shadow-brand-500/40 hover:shadow-brand-400/50 transition-all duration-200 hover:-translate-y-0.5 flex items-center justify-center"
+        className="fixed right-5 z-[201] w-14 h-14 rounded-full bg-brand-500 hover:bg-brand-400 text-white shadow-lg shadow-brand-500/40 hover:shadow-brand-400/50 transition-all duration-200 hover:-translate-y-0.5 flex items-center justify-center"
+        style={{ bottom: 'calc(1.25rem + env(safe-area-inset-bottom, 0px))' }}
       >
         {open ? (
           /* X cuando está abierto */

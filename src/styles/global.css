@@ -90,7 +90,7 @@
     color: var(--color-text-primary);
     font-family: var(--font-sans);
     line-height: 1.6;
-    overflow-x: hidden;
+    overflow-x: clip; /* clip no crea scroll container — no rompe position:fixed en iOS Safari */
   }
 
   /* Smooth focus rings */
