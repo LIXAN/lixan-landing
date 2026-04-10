@@ -8,6 +8,27 @@
 import { getHomePage } from '../../lib/sanity';
 import type { SanityProcessStep } from '../../lib/sanity';
 
+// SVG path map — futuristic/linear icons (24×24 viewBox, stroke-based)
+const stepIconPaths: Record<string, { d: string; viewBox?: string }> = {
+  // Crosshair / target — Diagnóstico
+  target: {
+    d: 'M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z M12 18C15.3137 18 18 15.3137 18 12C18 8.68629 15.3137 6 12 6C8.68629 6 6 8.68629 6 12C6 15.3137 8.68629 18 12 18Z M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z M12 2L12 6 M12 18L12 22 M22 12L18 12 M6 12L2 12',
+  },
+  // Document with check / sparkle — Propuesta
+  proposal: {
+    d: 'M9 12H15 M9 8H15 M9 16H12 M5 3H19C19.5523 3 20 3.44772 20 4V20C20 20.5523 19.5523 21 19 21H5C4.44772 21 4 20.5523 4 20V4C4 3.44772 4.44772 3 5 3Z M17 16L18.5 17.5L21 15',
+  },
+  // Code brackets / build — Construcción
+  build: {
+    d: 'M8 9L4 12L8 15 M16 9L20 12L16 15 M14 4L10 20 M3 3H21V21H3V3Z',
+    viewBox: '0 0 24 24',
+  },
+  // Rocket launch — Entrega
+  launch: {
+    d: 'M12 2C12 2 7 6.5 7 12C7 14.5 8 16.5 9.5 18L12 22L14.5 18C16 16.5 17 14.5 17 12C17 6.5 12 2 12 2Z M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z M9 8.5L4 10L5.5 13 M15 8.5L20 10L18.5 13',
+  },
+};
+
 const fallbackSteps: SanityProcessStep[] = [
   {
     _key: '1',
@@ -15,7 +36,7 @@ const fallbackSteps: SanityProcessStep[] = [
     title: 'Diagnóstico',
     description:
       'Una llamada de 30 minutos para entender tu negocio, tus herramientas y el problema que queremos resolver. Sin demos de ventas ni cuestionarios interminables.',
-    icon: '🎯',
+    icon: 'target',
   },
   {
     _key: '2',
@@ -23,7 +44,7 @@ const fallbackSteps: SanityProcessStep[] = [
     title: 'Propuesta',
     description:
       'En 48 horas recibes una propuesta con alcance, entregables y precio fijo. Sabes exactamente qué vas a recibir antes de comprometerte con nada.',
-    icon: '💡',
+    icon: 'proposal',
   },
   {
     _key: '3',
@@ -31,7 +52,7 @@ const fallbackSteps: SanityProcessStep[] = [
     title: 'Construcción',
     description:
       'Desarrollamos con actualizaciones semanales reales. Tienes visibilidad del avance, no un informe cada dos semanas que dice "en progreso".',
-    icon: '⚡',
+    icon: 'build',
   },
   {
     _key: '4',
@@ -39,7 +60,7 @@ const fallbackSteps: SanityProcessStep[] = [
     title: 'Entrega y soporte',
     description:
       'Documentamos todo y hacemos el traspaso contigo. Incluye 30 días de garantía para ajustes y correcciones post-lanzamiento.',
-    icon: '🏆',
+    icon: 'launch',
   },
 ];
 
@@ -92,11 +113,24 @@ try {
             <div
               data-animate={i % 2 === 0 ? 'left' : 'right'}
               style={`--ad: ${i * 100}ms`}
-              class={`group p-8 rounded-brand border border-surface-700 bg-surface-900 hover:border-brand-500/40 hover:shadow-[0_0_32px_rgba(109,61,247,0.22)] transition-all duration-300 hover:-translate-y-1 ${
+              class={`group p-6 md:p-8 rounded-brand border border-surface-700 bg-surface-900 hover:border-brand-500/40 hover:shadow-[0_0_32px_rgba(109,61,247,0.22)] transition-all duration-300 hover:-translate-y-1 ${
                 i % 2 === 0 ? 'md:text-right' : 'md:text-left'
               }`}
             >
-              <span class="text-5xl mb-4 block" aria-hidden="true">{step.icon}</span>
+              <!-- Icon + step number row on mobile -->
+              <div class="flex items-center gap-3 mb-5 md:block">
+                {(() => {
+                  const iconDef = stepIconPaths[step.icon] ?? stepIconPaths['target'];
+                  return (
+                    <div class="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center shrink-0 group-hover:bg-brand-500/20 transition-colors md:mb-5" aria-hidden="true">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-brand-400" viewBox={iconDef.viewBox ?? '0 0 24 24'} fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d={iconDef.d} />
+                      </svg>
+                    </div>
+                  );
+                })()}
+                <span class="md:hidden text-xs font-extrabold text-brand-400 tracking-widest">{step.number}</span>
+              </div>
               <h3 class="text-xl font-bold text-text-primary mb-3">{step.title}</h3>
               <p class="text-text-secondary text-sm leading-relaxed">{step.description}</p>
             </div>

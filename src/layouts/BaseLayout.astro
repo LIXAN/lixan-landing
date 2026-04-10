@@ -153,12 +153,24 @@ const articleSchema = isArticle ? {
     <!-- ── Performance: preconnect + preload ── -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Non-blocking Google Fonts: loads after paint so it never delays FCP -->
     <link
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
+      onload="this.onload=null;this.rel='stylesheet'"
     />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
     <!-- Preload critical assets -->
     <link rel="preload" as="image" href="/images/LixanLogo.svg" type="image/svg+xml" />
+    <!-- Preload hero background (desktop — main LCP image) -->
+    <link rel="preload" as="image" href="/images/BG_desktop.jpg" media="(min-width: 768px)" />
+    <link rel="preload" as="image" href="/images/BG_mobile.jpg"  media="(max-width: 767px)" />
 
     <!-- ── JSON-LD Structured Data ── -->
     <script type="application/ld+json" set:html={JSON.stringify(orgSchema)} />
@@ -169,6 +181,19 @@ const articleSchema = isArticle ? {
 
     <!-- Named slot: page-specific head tags (extra schemas, preloads, etc.) -->
     <slot name="head" />
+
+    <!-- ── Meta Pixel ── -->
+    {import.meta.env.PUBLIC_META_PIXEL_ID && (
+      <script is:inline define:vars={{ pixelId: import.meta.env.PUBLIC_META_PIXEL_ID }}>
+        !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+        n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+        document,'script','https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', pixelId);
+        fbq('track', 'PageView');
+      </script>
+    )}
 
     <!-- ── Loading screen styles ── -->
     <style>
@@ -199,6 +224,16 @@ const articleSchema = isArticle ? {
   </head>
 
   <body>
+    <!-- ── Meta Pixel noscript fallback ── -->
+    {import.meta.env.PUBLIC_META_PIXEL_ID && (
+      <noscript>
+        <img height="1" width="1" style="display:none"
+          src={`https://www.facebook.com/tr?id=${import.meta.env.PUBLIC_META_PIXEL_ID}&ev=PageView&noscript=1`}
+          alt=""
+        />
+      </noscript>
+    )}
+
     <!-- ── Loading screen ── -->
     <div id="loader" aria-hidden="true">
       <img src="/images/LixanLogo.svg" alt="" width="140" height="40" />

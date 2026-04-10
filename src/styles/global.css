@@ -90,6 +90,7 @@
     color: var(--color-text-primary);
     font-family: var(--font-sans);
     line-height: 1.6;
+    overflow-x: hidden;
   }
 
   /* Smooth focus rings */

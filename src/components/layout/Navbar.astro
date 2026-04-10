@@ -263,6 +263,9 @@ const navLinks = [
 
   @media (max-width: 767px) { .hamburger { display: flex; } }
 
+  /* Hide CTA on very small screens to avoid overflow */
+  @media (max-width: 479px) { .navbar-cta { display: none; } }
+
   .bar {
     display: block;
     width: 22px;

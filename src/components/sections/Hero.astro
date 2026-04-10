@@ -336,6 +336,21 @@ try {
     }
   }
 
+  /* Extra-small phones (<480px): slightly smaller headline */
+  @media (max-width: 479px) {
+    .hero-headline {
+      font-size: clamp(2.25rem, 9vw, 3rem);
+    }
+    .hero-sub {
+      font-size: 0.9375rem;
+    }
+    .btn-primary,
+    .btn-ghost {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
   /* ════════════════════════════════════════════════════════════
      REDUCED MOTION
   ════════════════════════════════════════════════════════════ */
