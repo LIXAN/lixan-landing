@@ -83,6 +83,7 @@
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip; /* previene scroll horizontal sin romper position:fixed */
   }
 
   body {
@@ -90,7 +91,7 @@
     color: var(--color-text-primary);
     font-family: var(--font-sans);
     line-height: 1.6;
-    overflow-x: clip; /* clip no crea scroll container — no rompe position:fixed en iOS Safari */
+    overflow-x: clip;
   }
 
   /* Smooth focus rings */
@@ -193,9 +194,17 @@
     opacity   0.65s cubic-bezier(0.16, 1, 0.3, 1) var(--ad, 0ms),
     transform 0.65s cubic-bezier(0.16, 1, 0.3, 1) var(--ad, 0ms);
 }
-[data-animate="left"]  { transform: translateX(-36px); }
-[data-animate="right"] { transform: translateX(36px); }
+[data-animate="left"]  { transform: translateX(-24px); }
+[data-animate="right"] { transform: translateX(24px); }
 [data-animate="scale"] { transform: scale(0.92) translateY(16px); }
+
+/* En móvil, no usar translateX lateral — solo Y para evitar el borde negro */
+@media (max-width: 767px) {
+  [data-animate="left"],
+  [data-animate="right"] {
+    transform: translateY(20px);
+  }
+}
 
 [data-animate].in-view {
   opacity: 1;
