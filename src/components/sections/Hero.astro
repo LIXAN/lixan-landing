@@ -40,7 +40,6 @@ try {
   // Sanity unavailable — using static fallback
 }
 
-const recent = ['Inviewd', 'Punta Diamante', 'ConstruSueños'];
 const marqueeItems = ['Landing Pages', 'Sitios Web', 'Automatizaciones', 'IA & Chatbots', 'CMS & Dashboards', 'Integraciones'];
 ---
 
@@ -103,17 +102,6 @@ const marqueeItems = ['Landing Pages', 'Sitios Web', 'Automatizaciones', 'IA & C
       )}
     </div>
 
-    <a href="#proyectos" class="hero-recent hero-in" style="--d: 750ms">
-      <span class="hero-recent-label">Lanzados recientemente</span>
-      <span class="hero-recent-list">
-        {recent.map((r, i) => (
-          <>
-            {i > 0 && <span class="hero-recent-sep" aria-hidden="true">·</span>}
-            <span>{r}</span>
-          </>
-        ))}
-      </span>
-    </a>
   </div>
 
   <!-- ── Marquee de servicios ────────────────────────────────── -->
@@ -443,38 +431,6 @@ const marqueeItems = ['Landing Pages', 'Sitios Web', 'Automatizaciones', 'IA & C
     transform: scale(1.08) rotate(-8deg);
   }
 
-  /* ── Proyectos recientes ── */
-  .hero-recent {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem 0.9rem;
-    margin-top: 1rem;
-    font-size: 0.8125rem;
-    color: rgba(230, 220, 255, 0.6);
-    transition: color 260ms ease;
-  }
-
-  .hero-recent:hover { color: rgba(240, 235, 255, 0.95); }
-
-  .hero-recent-label {
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    font-size: 0.6875rem;
-    font-weight: 600;
-    color: rgba(205, 191, 255, 0.55);
-  }
-
-  .hero-recent-list {
-    display: inline-flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.5rem;
-    font-weight: 600;
-  }
-
-  .hero-recent-sep { opacity: 0.4; }
 
   /* ── Marquee ── */
   .hero-marquee {

@@ -57,17 +57,17 @@ const webProjects: WebProject[] = [
     name: 'Hotel Punta Diamante',
     url: 'https://puntadiamantehotel.com',
     domain: 'puntadiamantehotel.com',
-    category: 'Hotelería premium',
+    category: 'Hotelería · Mantenimiento web',
     location: 'Ruitoque · Bucaramanga, CO',
     tagline: 'Descubra Santander desde el mejor lugar.',
     description:
-      'Experiencia digital para un hotel premium: habitaciones, eventos, spa y gastronomía en un solo destino, con un camino directo a la reserva.',
+      'Plan de mantenimiento y refresh del sitio existente de un hotel premium: renovamos su imagen y lo mantenemos al día para que siga llevando huéspedes a la reserva.',
     highlights: [
-      'Habitaciones, eventos, Aqua Spa y gastronomía',
-      'Botón de reserva siempre visible',
-      'Contacto inmediato por WhatsApp',
+      'Refresh visual del sitio existente',
+      'Mantenimiento y actualizaciones continuas',
+      'Habitaciones, eventos, Aqua Spa y gastronomía al día',
     ],
-    tags: ['Hotelería', 'Reservas', 'Eventos', 'WhatsApp'],
+    tags: ['Mantenimiento', 'Refresh', 'Hotelería', 'Soporte'],
     accent: '#d4a95f',
     image: '/images/proyectos/punta-diamante.webp',
     imageSm: '/images/proyectos/punta-diamante-sm.webp',
@@ -427,18 +427,51 @@ const pad = (n: number) => String(n).padStart(2, '0');
     background: radial-gradient(55% 75% at 85% 50%, color-mix(in srgb, var(--acc) 9%, transparent), transparent 70%);
   }
 
+  /* Tablet y móvil: captura a sangre arriba, texto debajo */
   @media (max-width: 1023px) {
-    .pf-card {
+    .pf .pf-card {
       grid-template-columns: 1fr;
-      gap: 2rem;
-      padding: 1.75rem;
+      align-items: stretch;
+      grid-template-rows: auto 1fr;
+      gap: 0;
+      padding: 0;
       border-radius: 0.9rem;
     }
-    .pf-shot { order: -1; }
+    .pf .pf-shot { order: -1; }
+    .pf .pf-browser {
+      border: 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0;
+      box-shadow: none;
+      transform: none;
+    }
+    .pf .pf-info { padding: 1.5rem 1.5rem 1.75rem; display: flex; flex-direction: column; }
+    .pf .pf-actions { margin-top: auto; }
+    .pf .pf-meta { margin-bottom: 0.9rem; }
+    .pf .pf-name { font-size: 1.5rem; }
+    .pf .pf-tagline { font-size: 1.0625rem; }
   }
 
-  @media (max-width: 479px) {
-    .pf-card { padding: 1.25rem; }
+  /* Tablet: dos tarjetas por fila */
+  @media (min-width: 680px) and (max-width: 1023px) {
+    .pf-stack {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+    .pf-item, .pf .pf-card { height: 100%; }
+    .pf .pf-desc { font-size: 0.9375rem; }
+  }
+
+  /* Móvil */
+  @media (max-width: 679px) {
+    .pf .pf-info { padding: 1.25rem 1.25rem 1.5rem; }
+    .pf .pf-line { display: none; }
+    .pf .pf-meta { gap: 0.6rem; }
+    .pf .pf-tags { margin-bottom: 1.5rem; }
+    .pf .pf-actions { flex-direction: column; align-items: stretch; gap: 0.85rem; }
+    .pf .pf-visit { justify-content: center; padding: 0.9rem 1.25rem; }
+    .pf .pf-location { justify-content: center; }
   }
 
   /* ── Info ───────────────────────────────────────────────── */
@@ -496,7 +529,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
   .pf-desc {
     color: var(--color-text-secondary);
-    font-size: 0.9625rem;
+    font-size: 1rem;
     line-height: 1.7;
     margin-bottom: 1.25rem;
   }
@@ -513,8 +546,9 @@ const pad = (n: number) => String(n).padStart(2, '0');
     display: flex;
     align-items: flex-start;
     gap: 0.6rem;
-    font-size: 0.875rem;
-    color: #d9d2f0;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: #e2dcf3;
   }
 
   .pf-highlights svg {
