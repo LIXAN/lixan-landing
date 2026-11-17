@@ -393,7 +393,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
     .pf-stack { gap: 14vh; }
     .pf-item {
       position: sticky;
-      top: calc(96px + var(--i) * 22px);
+      /* --top lo calcula el JS para que las tarjetas altas se lean completas */
+      top: var(--top, calc(96px + var(--i) * 22px));
     }
     .pf-card {
       transform: scale(calc(1 - var(--p) * 0.06));
@@ -630,10 +631,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
   .pf-url {
     flex: 1;
     min-width: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
+    display: block;
+    text-align: center;
     padding: 0.3rem 0.75rem;
     border-radius: 0.5rem;
     background: rgba(255, 255, 255, 0.05);
@@ -772,10 +771,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
     for (let i = 0; i < items.length; i++) {
       const next = items[i + 1];
       if (!next) { items[i].style.setProperty('--p', '0'); continue; }
-      const a = items[i].getBoundingClientRect();
+      // Progreso = cuánto le falta a la siguiente tarjeta para llegar a su punto sticky
       const b = next.getBoundingClientRect();
-      const dist = b.top - a.top - 22;
-      const p = Math.min(1, Math.max(0, 1 - dist / a.height));
+      const nextTop = parseFloat(next.style.getPropertyValue('--top')) || 96;
+      const span = Math.max(1, window.innerHeight - nextTop);
+      const p = Math.min(1, Math.max(0, 1 - (b.top - nextTop) / span));
       // Las tarjetas más atrás se hunden un poco más
       const depth = items.length - 1 - i;
       items[i].style.setProperty('--p', (p * (0.6 + 0.4 * depth / Math.max(1, items.length - 1))).toFixed(3));
@@ -787,7 +787,19 @@ const pad = (n: number) => String(n).padStart(2, '0');
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', onScroll);
+  // Si una tarjeta es más alta que la ventana, se fija por su borde inferior:
+  // así se ve completa antes de que la siguiente la cubra.
+  function layoutTops() {
+    items.forEach((it, i) => {
+      const ideal = 96 + Math.min(i, 4) * 22;
+      const fit = window.innerHeight - it.offsetHeight - 24;
+      it.style.setProperty('--top', `${Math.min(ideal, fit)}px`);
+    });
+  }
+
+  window.addEventListener('resize', () => { layoutTops(); onScroll(); });
+  window.addEventListener('load', () => { layoutTops(); updateStack(); });
+  layoutTops();
   updateStack();
 
   // ── Mockup: tilt 3D + burbuja que sigue el cursor ──

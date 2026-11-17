@@ -51,6 +51,21 @@ try {
   // Sanity not configured — using placeholders
 }
 
+// Reseña de Héctor (ConstruSueños) — se agrega siempre, sin duplicarla si ya existe en Sanity
+const hector: Partial<SanityTestimonial> = {
+  _id: 'hector-construsuenos',
+  authorName: 'Héctor',
+  role: '',
+  company: 'ConstruSueños',
+  quote:
+    'Andrés es muy amable y siempre estuvo atento a lo que necesitábamos. Quedamos muy contentos con la página de ConstruSueños. ¡Nuevamente, muchas gracias!',
+  rating: 5,
+  featured: true,
+};
+if (!testimonials.some((t) => (t.company ?? '').toLowerCase().includes('construsue'))) {
+  testimonials = [...testimonials, hector];
+}
+
 
 ---
 
@@ -65,17 +80,17 @@ try {
     </div>
 
     <!-- ── Testimonials grid ── -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
       {testimonials.map((t, i) => (
         <blockquote
           data-animate
           style={`--ad: ${i * 90}ms`}
-          class="relative flex flex-col gap-5 p-7 rounded-xl border border-white/8 hover:border-white/20 transition-all duration-300"
+          class="relative flex flex-col gap-5 p-6 sm:p-8 rounded-xl border border-white/8 hover:border-white/20 transition-all duration-300"
         >
-          <span class="font-display text-6xl leading-[0.6] text-lixan-purple-light/70 select-none" aria-hidden="true">“</span>
+          <span class="font-display text-6xl leading-none h-8 -mb-3 text-lixan-purple-light/70 select-none" aria-hidden="true">“</span>
 
           <!-- Quote text -->
-          <p class="font-display text-xl leading-snug text-text-primary/90 flex-1">
+          <p class="font-display text-lg sm:text-xl leading-snug text-text-primary/90 flex-1">
             {t.quote}
           </p>
 
@@ -88,9 +103,9 @@ try {
             >
               {(t.authorName ?? 'A').charAt(0).toUpperCase()}
             </div>
-            <div>
+            <div class="min-w-0">
               <p class="text-sm font-semibold text-text-primary">{t.authorName}</p>
-              <p class="text-xs text-text-muted">{t.role} · {t.company}</p>
+              <p class="text-xs text-text-muted">{[t.role, t.company].filter(Boolean).join(' · ')}</p>
             </div>
           </footer>
         </blockquote>
