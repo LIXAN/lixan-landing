@@ -96,10 +96,10 @@ try {
 
     <!-- ── Section header ── -->
     <div class="text-center mb-16" data-animate>
-      <span class="inline-block text-electric-400 text-sm font-semibold uppercase tracking-widest mb-3">
+      <span class="eyebrow mb-5"><span class="eyebrow-dot"></span>
         Cómo trabajamos
       </span>
-      <h2 id="how-heading" class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4">
+      <h2 id="how-heading" data-split class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4">
         De la llamada al lanzamiento, <span class="gradient-text">sin sorpresas</span>
       </h2>
       <p class="text-text-secondary max-w-xl mx-auto text-lg">
@@ -108,12 +108,14 @@ try {
     </div>
 
     <!-- ── Steps ── -->
-    <div class="relative">
+    <div class="relative" id="how-steps">
       <!-- Vertical line connector (desktop) -->
       <div
         aria-hidden="true"
         class="hidden md:block absolute left-1/2 top-8 bottom-8 w-px bg-gradient-to-b from-brand-500/0 via-brand-500/30 to-brand-500/0 -translate-x-1/2"
       ></div>
+      <!-- Línea que se llena con el scroll -->
+      <div aria-hidden="true" class="how-fill hidden md:block"><span id="how-fill-bar"></span></div>
 
       <div class="space-y-8 md:space-y-0">
         {steps.map((step, i) => (
@@ -144,7 +146,7 @@ try {
 
             <!-- Step number (center) -->
             <div class="hidden md:flex justify-center items-center">
-              <div class="w-14 h-14 rounded-full bg-surface-800 border-2 border-brand-500/60 flex items-center justify-center text-brand-400 font-extrabold text-sm shadow-lg shadow-brand-500/20">
+              <div class="how-dot w-14 h-14 rounded-full bg-surface-800 border-2 border-brand-500/60 flex items-center justify-center text-brand-400 font-extrabold text-sm shadow-lg shadow-brand-500/20">
                 {step.number}
               </div>
             </div>
@@ -167,3 +169,60 @@ try {
     </div>
   </div>
 </section>
+
+<style>
+  .how-fill {
+    position: absolute;
+    left: 50%;
+    top: 2rem;
+    bottom: 2rem;
+    width: 2px;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+  .how-fill span {
+    display: block;
+    height: 100%;
+    transform: scaleY(var(--fill, 0));
+    transform-origin: 50% 0;
+    background: linear-gradient(to bottom, #A87DD1, #855dff 60%, #9AAD1A);
+    box-shadow: 0 0 14px rgba(133, 93, 255, 0.6);
+    border-radius: 2px;
+  }
+  .how-dot {
+    position: relative;
+    z-index: 1;
+    transition: background-color 500ms ease, color 500ms ease, transform 600ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 500ms ease, border-color 500ms ease;
+  }
+  .how-dot.is-lit {
+    background: linear-gradient(135deg, #7B4CB3, #5A3285);
+    border-color: #A87DD1;
+    color: #fff;
+    transform: scale(1.12);
+    box-shadow: 0 0 0 6px rgba(123, 76, 179, 0.15), 0 0 30px rgba(133, 93, 255, 0.55);
+  }
+</style>
+
+<script>
+  const wrap = document.getElementById('how-steps');
+  const fill = document.getElementById('how-fill-bar');
+  const dots = Array.from(document.querySelectorAll<HTMLElement>('.how-dot'));
+  let queued = false;
+
+  function paint() {
+    queued = false;
+    if (!wrap || !fill) return;
+    const r = wrap.getBoundingClientRect();
+    const anchor = window.innerHeight * 0.6;
+    const p = Math.min(1, Math.max(0, (anchor - r.top) / r.height));
+    fill.style.setProperty('--fill', p.toFixed(4));
+    dots.forEach((d) => {
+      const dr = d.getBoundingClientRect();
+      d.classList.toggle('is-lit', dr.top + dr.height / 2 < anchor);
+    });
+  }
+
+  window.addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(paint); } }, { passive: true });
+  window.addEventListener('resize', paint);
+  paint();
+</script>

@@ -2,13 +2,15 @@
 /**
  * Hero.astro
  * ─────────────────────────────────────────────────────────────
- * Layout: columna única centrada, full-viewport
- *   Fondo: BG_desktop.jpg (desktop) / BG_mobile.jpg (mobile)
- *   Capa de overlay oscuro → texto siempre legible
- *   Contenido: badge · headline · sub · CTAs
+ * Layout: full-viewport, contenido a la izquierda (desktop) /
+ * centrado (mobile) + marquee de servicios al pie.
+ *
+ * Fondo: BG_desktop.jpg / BG_mobile.jpg con Ken Burns suave,
+ * parallax al mover el puntero, orbes "aurora" y rejilla sutil.
+ * Titular: se revela palabra por palabra cuando el loader termina
+ * (data-split + data-split-onload, ver Motion.astro).
  *
  * Texto editable desde Sanity Studio → "Página Principal".
- * Animaciones: CSS puro, staggered, respeta prefers-reduced-motion.
  * ─────────────────────────────────────────────────────────────
  */
 import { getHomePage } from '../../lib/sanity';
@@ -37,16 +39,15 @@ try {
 } catch {
   // Sanity unavailable — using static fallback
 }
+
+const recent = ['Inviewd', 'Punta Diamante', 'ConstruSueños'];
+const marqueeItems = ['Landing Pages', 'Sitios Web', 'Automatizaciones', 'IA & Chatbots', 'CMS & Dashboards', 'Integraciones'];
 ---
 
 <section class="hero" id="inicio" aria-label="Sección principal Lixan">
 
-  <!-- ── Fondo: imagen + overlay + glow + vignette ─────────────
-       Todo aria-hidden; puramente decorativo.
-  ─────────────────────────────────────────────────────────────── -->
+  <!-- ── Fondo (decorativo) ─────────────────────────────────── -->
   <div class="hero-bg" aria-hidden="true">
-
-    <!-- Imagen responsive: mobile primero, desktop en pantallas grandes -->
     <picture class="hero-bg-picture">
       <source srcset="/images/BG_mobile.jpg" media="(max-width: 767px)" />
       <img
@@ -59,84 +60,116 @@ try {
       />
     </picture>
 
-    <!-- Overlay semitransparente: mantiene legibilidad del texto -->
     <div class="hero-bg-overlay"></div>
-
-    <!-- Glow violeta centrado: añade profundidad sobre la foto -->
-    <div class="hero-glow-center"></div>
-
-    <!-- Vignette: oscurece bordes para separar visualmente del resto -->
+    <div class="hero-orb hero-orb-a"></div>
+    <div class="hero-orb hero-orb-b"></div>
+    <div class="hero-grid"></div>
     <div class="hero-vignette"></div>
-
   </div>
 
-  <!-- ── Contenido centrado ──────────────────────────────────── -->
+  <!-- ── Contenido ───────────────────────────────────────────── -->
   <div class="hero-content">
 
-    <!-- Headline principal -->
-    <h1 class="hero-headline">
+    <span class="eyebrow hero-in" style="--d: 0ms">
+      <span class="eyebrow-dot"></span>
+      Estudio digital · Colombia
+    </span>
+
+    <h1 class="hero-headline" data-split data-split-onload style="--sd: 120ms">
       {hero.heroHeadline}<br>
       <span class="accent">{hero.heroAccent}</span>
     </h1>
 
-    <!-- Subtítulo -->
-    <p class="hero-sub">
+    <p class="hero-sub hero-in" style="--d: 450ms">
       {hero.heroSubtitle}
     </p>
 
-    <!-- CTAs -->
-    <div class="hero-ctas">
+    <div class="hero-ctas hero-in" style="--d: 600ms">
       <a
         href="#contacto"
         class="btn-primary"
+        data-magnetic="0.25"
         aria-label="Cuéntanos tu proyecto y agendamos una llamada"
       >
-        {hero.heroCta1}
+        <span class="btn-primary-label">{hero.heroCta1}</span>
       </a>
       {hero.heroCta2 && (
         <a
-          href="#casos"
+          href="#proyectos"
           class="btn-ghost"
+          data-magnetic="0.25"
           aria-label="Ver proyectos realizados"
         >
+          <span class="btn-ghost-play" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M6.3 2.84A1.5 1.5 0 004 4.11v11.78a1.5 1.5 0 002.3 1.27l9.34-5.89a1.5 1.5 0 000-2.54L6.3 2.84z" /></svg>
+          </span>
           {hero.heroCta2}
         </a>
       )}
     </div>
 
+    <a href="#proyectos" class="hero-recent hero-in" style="--d: 750ms">
+      <span class="hero-recent-label">Lanzados recientemente</span>
+      <span class="hero-recent-list">
+        {recent.map((r, i) => (
+          <>
+            {i > 0 && <span class="hero-recent-sep" aria-hidden="true">·</span>}
+            <span>{r}</span>
+          </>
+        ))}
+      </span>
+    </a>
   </div>
-  <!-- /hero-content -->
 
+  <!-- ── Marquee de servicios ────────────────────────────────── -->
+  <div class="hero-marquee hero-in" style="--d: 900ms" aria-hidden="true">
+    <div class="marquee">
+      {[0, 1].map(() => (
+        <div class="marquee-track">
+          {marqueeItems.map((m) => (
+            <span class="hero-marquee-item">
+              {m}
+              <svg viewBox="0 0 24 24" fill="currentColor" class="hero-marquee-star"><path d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z" /></svg>
+            </span>
+          ))}
+        </div>
+      ))}
+    </div>
+  </div>
 </section>
 
 <style>
   /* ════════════════════════════════════════════════════════════
-     KEYFRAMES
+     BASE
   ════════════════════════════════════════════════════════════ */
-
-  @keyframes heroFadeInUp {
-    from { opacity: 0; transform: translateY(28px) scale(0.97); }
-    to   { opacity: 1; transform: translateY(0)    scale(1); }
-  }
-
-  /* ════════════════════════════════════════════════════════════
-     SECCIÓN BASE
-  ════════════════════════════════════════════════════════════ */
-
   .hero {
     position: relative;
     min-height: 100svh;
-    background-color: #0C0C0C; /* fallback si la imagen no carga */
+    background-color: #0C0C0C;
     overflow: hidden;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+  }
+
+  /* Entrada escalonada; arranca cuando <html> recibe .is-loaded */
+  .hero-in {
+    opacity: 0;
+    transform: translateY(24px);
+    filter: blur(6px);
+  }
+  :global(html.is-loaded) .hero-in {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition:
+      opacity   1s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0ms),
+      transform 1s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0ms),
+      filter    1s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0ms);
   }
 
   /* ════════════════════════════════════════════════════════════
-     CAPAS DE FONDO
+     FONDO
   ════════════════════════════════════════════════════════════ */
-
   .hero-bg {
     position: absolute;
     inset: 0;
@@ -144,132 +177,177 @@ try {
     pointer-events: none;
   }
 
-  /* Imagen responsive — cubre todo el hero */
   .hero-bg-picture {
     position: absolute;
-    inset: 0;
+    inset: -3%;
     display: block;
+    transform: translate3d(var(--px, 0px), var(--py, 0px), 0);
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .hero-bg-photo {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center center;
-    /* Sin opacidad adicional: la imagen debe verse nítida */
-    opacity: 1;
+    object-position: center;
+    transform: scale(1.14);
   }
 
-  /* Overlay oscuro encima de la imagen — equilibrio entre visibilidad y legibilidad */
+  :global(html.is-loaded) .hero-bg-photo {
+    animation: heroKenBurns 2.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes heroKenBurns {
+    from { transform: scale(1.14); filter: brightness(0.5) blur(4px); }
+    to   { transform: scale(1);    filter: none; }
+  }
+
   .hero-bg-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      to bottom,
-      rgba(8, 6, 20, 0.55) 0%,
-      rgba(8, 6, 20, 0.40) 50%,
-      rgba(8, 6, 20, 0.65) 100%
-    );
+    background:
+      linear-gradient(90deg, rgba(8, 6, 20, 0.78) 0%, rgba(8, 6, 20, 0.35) 60%, rgba(8, 6, 20, 0.5) 100%),
+      linear-gradient(to bottom, rgba(8, 6, 20, 0.45) 0%, transparent 40%, rgba(8, 6, 20, 0.9) 100%);
   }
 
-  /* Glow violeta central suave — añade coherencia con la paleta de marca */
-  .hero-glow-center {
+  @media (max-width: 1023px) {
+    .hero-bg-overlay {
+      background: linear-gradient(to bottom, rgba(8, 6, 20, 0.6) 0%, rgba(8, 6, 20, 0.5) 50%, rgba(8, 6, 20, 0.92) 100%);
+    }
+  }
+
+  /* Orbes aurora */
+  .hero-orb {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80%;
-    height: 70%;
     border-radius: 50%;
-    background: radial-gradient(
-      ellipse at 50% 50%,
-      rgba(123, 76, 179, 0.12) 0%,
-      transparent 65%
-    );
+    filter: blur(80px);
+    opacity: 0.55;
+    mix-blend-mode: screen;
+    will-change: transform;
   }
 
-  /* Vignette: oscurece bordes superior e inferior */
+  .hero-orb-a {
+    width: 46vw;
+    height: 46vw;
+    max-width: 640px;
+    max-height: 640px;
+    top: -12%;
+    right: -8%;
+    background: radial-gradient(circle, rgba(123, 76, 179, 0.85), transparent 65%);
+    animation: heroOrbA 18s ease-in-out infinite alternate;
+  }
+
+  .hero-orb-b {
+    width: 34vw;
+    height: 34vw;
+    max-width: 480px;
+    max-height: 480px;
+    bottom: 4%;
+    left: 30%;
+    background: radial-gradient(circle, rgba(154, 173, 26, 0.45), transparent 65%);
+    animation: heroOrbB 22s ease-in-out infinite alternate;
+  }
+
+  @keyframes heroOrbA {
+    to { transform: translate3d(-12vw, 14vh, 0) scale(1.15); }
+  }
+  @keyframes heroOrbB {
+    to { transform: translate3d(14vw, -10vh, 0) scale(0.85); }
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(60% 60% at 30% 50%, #000, transparent);
+    -webkit-mask-image: radial-gradient(60% 60% at 30% 50%, #000, transparent);
+  }
+
   .hero-vignette {
     position: absolute;
     inset: 0;
-    background:
-      linear-gradient(to bottom, rgba(8, 6, 20, 0.6) 0%,  transparent 18%),
-      linear-gradient(to top,    rgba(8, 6, 20, 0.7) 0%, transparent 20%);
+    background: linear-gradient(to top, #08070f 0%, transparent 22%);
   }
 
   /* ════════════════════════════════════════════════════════════
-     CONTENIDO CENTRADO
+     CONTENIDO
   ════════════════════════════════════════════════════════════ */
-
   .hero-content {
     position: relative;
     z-index: 10;
+    flex: 1;
     width: 100%;
-    max-width: 760px;
+    max-width: 1200px;
     margin-inline: auto;
-    padding-inline: 1.5rem;
-
-    /* Espacio superior para el navbar (72px) */
-    padding-top:    calc(72px + 4rem);
-    padding-bottom: 4rem;
-
+    padding: calc(72px + 4rem) 1.5rem 3rem;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
     text-align: center;
-    gap: 1.75rem;
+    gap: 1.6rem;
   }
 
   @media (min-width: 768px) {
-    .hero-content {
-      padding-inline: 2.5rem;
-    }
+    .hero-content { padding-inline: 2.5rem; }
   }
 
-  /* Desktop: left-aligned */
   @media (min-width: 1024px) {
     .hero-content {
-      max-width: 1200px;
       align-items: flex-start;
       text-align: left;
     }
-
-    .hero-ctas {
-      justify-content: flex-start;
-    }
-
+    .hero-ctas { justify-content: flex-start; }
   }
 
   /* ── Headline ── */
   .hero-headline {
     margin: 0;
-    font-size: clamp(3rem, 6.5vw, 5.25rem);
+    max-width: 15ch;
+    font-size: clamp(3rem, 7vw, 6rem);
     font-weight: 800;
-    line-height: 1.06;
-    letter-spacing: -0.035em;
+    line-height: 1.02;
+    letter-spacing: -0.045em;
     color: #ffffff;
-    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.5);
-
-    animation: heroFadeInUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 0ms both;
+    text-shadow: 0 2px 30px rgba(0, 0, 0, 0.35);
   }
 
-  /* Frase con gradiente de color */
   .accent {
-    background: linear-gradient(135deg, #C9A8F0 0%, #A87DD1 45%, #9AAD1A 100%);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    padding-right: 0.1em;
+    background: linear-gradient(120deg, #C9A8F0 0%, #A87DD1 40%, #9AAD1A 100%);
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+  }
+
+  /* Cuando Motion.astro divide el titular, cada palabra lleva su propio gradiente
+     (background-clip:text no atraviesa hijos con transform). */
+  .hero-headline:global(.is-split) .accent {
+    background: none;
+  }
+  .hero-headline:global(.is-split) .accent :global(.split-i) {
+    background: linear-gradient(120deg, #C9A8F0 0%, #A87DD1 50%, #9AAD1A 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    padding-right: 0.08em;
   }
 
   /* ── Subtítulo ── */
   .hero-sub {
     margin: 0;
     max-width: 540px;
-    font-size: clamp(1rem, 1.6vw, 1.125rem);
-    color: rgba(230, 220, 255, 0.85);
+    font-size: clamp(1rem, 1.6vw, 1.175rem);
+    color: rgba(230, 220, 255, 0.82);
     line-height: 1.7;
-
-    animation: heroFadeInUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 140ms both;
   }
 
   /* ── CTAs ── */
@@ -279,71 +357,180 @@ try {
     justify-content: center;
     gap: 0.875rem;
     flex-wrap: wrap;
-
-    animation: heroFadeInUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 280ms both;
+    margin-top: 0.4rem;
   }
 
-  /* Botón primario */
   .btn-primary {
+    position: relative;
     display: inline-flex;
     align-items: center;
-    padding: 0.9rem 1.875rem;
-    background: linear-gradient(135deg, #7B4CB3 0%, #5A3285 100%);
-    border: 1px solid rgba(168, 125, 209, 0.35);
+    padding: 1rem 2rem;
     border-radius: 9999px;
     font-size: 0.9375rem;
     font-weight: 600;
     color: #fff;
     white-space: nowrap;
-    box-shadow: 0 8px 32px rgba(123, 76, 179, 0.45);
-    transition: transform 240ms ease, box-shadow 240ms ease;
+    overflow: hidden;
+    isolation: isolate;
+    background: linear-gradient(135deg, #7B4CB3 0%, #5A3285 100%);
+    border: 1px solid rgba(168, 125, 209, 0.45);
+    box-shadow: 0 10px 36px rgba(123, 76, 179, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    transition: box-shadow 300ms ease;
   }
 
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 44px rgba(123, 76, 179, 0.60);
+  /* Relleno que sube desde abajo al hacer hover */
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(135deg, #A87DD1 0%, #7B4CB3 100%);
+    transform: translateY(101%);
+    border-radius: inherit;
+    transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  /* Botón ghost */
+  /* Brillo que recorre el botón cada pocos segundos */
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.35) 50%, transparent 60%);
+    transform: translateX(-120%);
+    animation: btnShine 4.5s ease-in-out 2.5s infinite;
+  }
+
+  @keyframes btnShine {
+    0%, 70% { transform: translateX(-120%); }
+    100%    { transform: translateX(120%); }
+  }
+
+  .btn-primary:hover { box-shadow: 0 16px 48px rgba(123, 76, 179, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.2); }
+  .btn-primary:hover::before { transform: translateY(0); }
+
   .btn-ghost {
     display: inline-flex;
     align-items: center;
-    padding: 0.9rem 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.20);
+    gap: 0.65rem;
+    padding: 0.55rem 1.4rem 0.55rem 0.55rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 9999px;
     font-size: 0.9375rem;
     font-weight: 500;
-    color: rgba(230, 220, 255, 0.80);
-    backdrop-filter: blur(4px);
-    transition: color 240ms ease, border-color 240ms ease, background-color 240ms ease;
+    color: rgba(240, 235, 255, 0.88);
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: color 260ms ease, border-color 260ms ease, background-color 260ms ease;
   }
+
+  .btn-ghost-play {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    transition: background-color 260ms ease, transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .btn-ghost-play svg { width: 0.8rem; height: 0.8rem; margin-left: 2px; }
 
   .btn-ghost:hover {
     color: #ffffff;
-    border-color: rgba(168, 125, 209, 0.55);
-    background-color: rgba(123, 76, 179, 0.10);
+    border-color: rgba(168, 125, 209, 0.6);
+    background-color: rgba(123, 76, 179, 0.14);
+  }
+
+  .btn-ghost:hover .btn-ghost-play {
+    background: #9AAD1A;
+    color: #0c0c0c;
+    transform: scale(1.08) rotate(-8deg);
+  }
+
+  /* ── Proyectos recientes ── */
+  .hero-recent {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem 0.9rem;
+    margin-top: 1rem;
+    font-size: 0.8125rem;
+    color: rgba(230, 220, 255, 0.6);
+    transition: color 260ms ease;
+  }
+
+  .hero-recent:hover { color: rgba(240, 235, 255, 0.95); }
+
+  .hero-recent-label {
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: rgba(205, 191, 255, 0.55);
+  }
+
+  .hero-recent-list {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600;
+  }
+
+  .hero-recent-sep { opacity: 0.4; }
+
+  /* ── Marquee ── */
+  .hero-marquee {
+    position: relative;
+    z-index: 10;
+    padding-block: 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    background: linear-gradient(to bottom, rgba(8, 7, 15, 0.2), rgba(8, 7, 15, 0.7));
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  .hero-marquee-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 3rem;
+    font-size: clamp(1.1rem, 2vw, 1.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(205, 191, 255, 0.45);
+  }
+
+  .hero-marquee-item:nth-child(even) {
+    color: rgba(240, 235, 255, 0.85);
+    -webkit-text-stroke: 0;
+  }
+
+  .hero-marquee-star {
+    width: 0.9rem;
+    height: 0.9rem;
+    color: #9AAD1A;
   }
 
   /* ════════════════════════════════════════════════════════════
-     RESPONSIVE — MOBILE (< 768px)
+     MOBILE
   ════════════════════════════════════════════════════════════ */
-
   @media (max-width: 767px) {
     .hero-content {
       padding-top: calc(72px + 2.5rem);
-      padding-bottom: 3rem;
-      gap: 1.5rem;
+      padding-bottom: 2.5rem;
+      gap: 1.35rem;
     }
+    .hero-orb { filter: blur(60px); }
   }
 
-  /* Extra-small phones (<480px): slightly smaller headline */
   @media (max-width: 479px) {
-    .hero-headline {
-      font-size: clamp(2.25rem, 9vw, 3rem);
-    }
-    .hero-sub {
-      font-size: 0.9375rem;
-    }
+    .hero-headline { font-size: clamp(2.4rem, 11vw, 3rem); }
+    .hero-sub { font-size: 0.9375rem; }
+    .hero-ctas { width: 100%; }
     .btn-primary,
     .btn-ghost {
       width: 100%;
@@ -354,14 +541,30 @@ try {
   /* ════════════════════════════════════════════════════════════
      REDUCED MOTION
   ════════════════════════════════════════════════════════════ */
-
   @media (prefers-reduced-motion: reduce) {
-    .hero-headline,
-    .hero-sub,
-    .hero-ctas {
-      animation: none;
-      opacity: 1;
-      transform: none;
-    }
+    .hero-in { opacity: 1; transform: none; filter: none; }
+    .hero-bg-photo, .hero-orb, .btn-primary::after { animation: none; }
   }
 </style>
+
+<script>
+  // Parallax del fondo con el puntero (solo desktop)
+  const hero = document.querySelector<HTMLElement>('.hero');
+  const pic  = hero?.querySelector<HTMLElement>('.hero-bg-picture');
+  const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (hero && pic && fine && !reduce) {
+    hero.addEventListener('pointermove', (e) => {
+      const r = hero.getBoundingClientRect();
+      const nx = (e.clientX - r.left) / r.width - 0.5;
+      const ny = (e.clientY - r.top) / r.height - 0.5;
+      pic.style.setProperty('--px', `${(-nx * 18).toFixed(1)}px`);
+      pic.style.setProperty('--py', `${(-ny * 12).toFixed(1)}px`);
+    });
+    hero.addEventListener('pointerleave', () => {
+      pic.style.setProperty('--px', '0px');
+      pic.style.setProperty('--py', '0px');
+    });
+  }
+</script>

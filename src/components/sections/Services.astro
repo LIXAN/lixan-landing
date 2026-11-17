@@ -104,10 +104,10 @@ try {
 
     <!-- ── Section header ── -->
     <div class="text-center mb-16" data-animate>
-      <span class="inline-block text-brand-400 text-sm font-semibold uppercase tracking-widest mb-3">
+      <span class="eyebrow mb-5"><span class="eyebrow-dot"></span>
         Lo que hacemos
       </span>
-      <h2 id="services-heading" class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4">
+      <h2 id="services-heading" data-split class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4">
         Servicios para <span class="gradient-text">problemas concretos</span>
       </h2>
       <p class="text-text-secondary max-w-xl mx-auto text-lg">
@@ -122,6 +122,7 @@ try {
         return (
           <article
             data-animate="scale"
+            data-spotlight
             style={`--ad: ${i * 80}ms`}
             class={`relative group p-5 sm:p-7 rounded-brand border transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_32px_rgba(109,61,247,0.22)] ${
               service.highlighted

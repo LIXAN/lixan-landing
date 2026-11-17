@@ -1,0 +1,139 @@
+---
+/**
+ * Motion.astro
+ * ─────────────────────────────────────────────────────────────
+ * Capa global de micro-interacciones. Sin dependencias.
+ *
+ *  · Barra de progreso de scroll
+ *  · [data-split]     → titulares que se revelan palabra por palabra
+ *  · [data-count]     → contadores que suben al entrar en pantalla
+ *  · [data-magnetic]  → botones que se "pegan" al cursor
+ *  · [data-spotlight] → tarjetas con luz que sigue al cursor
+ *
+ * Respeta prefers-reduced-motion y desactiva efectos de puntero
+ * en pantallas táctiles.
+ * ─────────────────────────────────────────────────────────────
+ */
+---
+
+<div class="scroll-progress" aria-hidden="true"><span id="scroll-progress-bar"></span></div>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  // ── Scroll progress ────────────────────────────────────────
+  const bar = document.getElementById('scroll-progress-bar');
+  let raf = 0;
+  function paintProgress() {
+    raf = 0;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const p = max > 0 ? window.scrollY / max : 0;
+    if (bar) bar.style.transform = `scaleX(${p.toFixed(4)})`;
+  }
+  window.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(paintProgress); }, { passive: true });
+  paintProgress();
+
+  // ── Split headings (palabra por palabra) ───────────────────
+  document.querySelectorAll<HTMLElement>('[data-split]').forEach((el) => {
+    if (reduce) return;
+    let idx = 0;
+    const walk = (node: Node) => {
+      Array.from(node.childNodes).forEach((child) => {
+        if (child.nodeType === Node.TEXT_NODE) {
+          const parts = (child.textContent ?? '').split(/(\s+)/);
+          const frag = document.createDocumentFragment();
+          parts.forEach((part) => {
+            if (!part) return;
+            if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+            const outer = document.createElement('span');
+            outer.className = 'split-w';
+            const inner = document.createElement('span');
+            inner.className = 'split-i';
+            inner.style.setProperty('--wi', String(idx++));
+            inner.textContent = part;
+            outer.appendChild(inner);
+            frag.appendChild(outer);
+          });
+          child.replaceWith(frag);
+        } else if (child.nodeType === Node.ELEMENT_NODE && (child as Element).tagName !== 'BR') {
+          walk(child);
+        }
+      });
+    };
+    walk(el);
+    el.classList.add('is-split');
+  });
+
+  // ── Observador compartido para split + counters ────────────
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      const el = e.target as HTMLElement;
+      el.classList.add('in-view');
+      if (el.dataset.count) runCounter(el);
+      io.unobserve(el);
+    });
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll('[data-split]:not([data-split-onload]), [data-count]').forEach((el) => io.observe(el));
+
+  // ── Entrada de página: espera a que el loader se desvanezca ─
+  function markLoaded() {
+    setTimeout(() => {
+      document.documentElement.classList.add('is-loaded');
+      document.querySelectorAll('[data-split-onload]').forEach((el) => el.classList.add('in-view'));
+    }, reduce ? 0 : 280);
+  }
+  if (document.readyState === 'complete') markLoaded();
+  else window.addEventListener('load', markLoaded, { once: true });
+
+  function runCounter(el: HTMLElement) {
+    const target = Number(el.dataset.count) || 0;
+    const pad = Number(el.dataset.countPad) || 0;
+    const suffix = el.dataset.countSuffix ?? '';
+    const fmt = (n: number) => String(Math.round(n)).padStart(pad, '0') + suffix;
+    if (reduce) { el.textContent = fmt(target); return; }
+    const dur = 1400;
+    const t0 = performance.now();
+    const step = (t: number) => {
+      const k = Math.min(1, (t - t0) / dur);
+      const eased = 1 - Math.pow(1 - k, 4);
+      el.textContent = fmt(target * eased);
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  // ── Efectos de puntero (solo desktop) ──────────────────────
+  if (finePointer && !reduce) {
+    document.querySelectorAll<HTMLElement>('[data-magnetic]').forEach((el) => {
+      // Lerp en rAF sobre la propiedad `translate` → no pisa transiciones ni transforms del CSS
+      const strength = Number(el.dataset.magnetic) || 0.3;
+      let tx = 0, ty = 0, cx = 0, cy = 0, loop = 0;
+      const tick = () => {
+        cx += (tx - cx) * 0.18;
+        cy += (ty - cy) * 0.18;
+        el.style.translate = `${cx.toFixed(2)}px ${cy.toFixed(2)}px`;
+        if (Math.abs(tx - cx) > 0.05 || Math.abs(ty - cy) > 0.05) loop = requestAnimationFrame(tick);
+        else { loop = 0; if (tx === 0 && ty === 0) el.style.translate = ''; }
+      };
+      const kick = () => { if (!loop) loop = requestAnimationFrame(tick); };
+      el.addEventListener('pointermove', (e) => {
+        const r = el.getBoundingClientRect();
+        tx = (e.clientX - r.left - r.width / 2) * strength;
+        ty = (e.clientY - r.top - r.height / 2) * strength;
+        kick();
+      });
+      el.addEventListener('pointerleave', () => { tx = 0; ty = 0; kick(); });
+    });
+
+    document.querySelectorAll<HTMLElement>('[data-spotlight]').forEach((el) => {
+      el.addEventListener('pointermove', (e) => {
+        const r = el.getBoundingClientRect();
+        el.style.setProperty('--mx', `${e.clientX - r.left}px`);
+        el.style.setProperty('--my', `${e.clientY - r.top}px`);
+      });
+    });
+  }
+</script>

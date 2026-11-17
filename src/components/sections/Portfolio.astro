@@ -1,0 +1,851 @@
+---
+/**
+ * Portfolio.astro
+ * ─────────────────────────────────────────────────────────────
+ * Proyectos web lanzados por Lixan, presentados como un "stack"
+ * de tarjetas sticky: al hacer scroll cada proyecto se apila sobre
+ * el anterior, que se encoge y se oscurece suavemente.
+ *
+ * Cada tarjeta: info del proyecto + mockup de navegador con la
+ * captura real, chips flotantes y una burbuja "Visitar" que sigue
+ * al cursor (solo en dispositivos con puntero fino).
+ * ─────────────────────────────────────────────────────────────
+ */
+
+interface Project {
+  slug: string;
+  name: string;
+  url: string;
+  domain: string;
+  category: string;
+  location: string;
+  tagline: string;
+  description: string;
+  highlights: string[];
+  tags: string[];
+  chips: [string, string];
+  accent: string;      // color principal del proyecto
+  accent2: string;     // color secundario para gradientes
+  image: string;
+  imageSm: string;
+}
+
+const projects: Project[] = [
+  {
+    slug: 'inviewd',
+    name: 'Inviewd',
+    url: 'https://inviewd.com/',
+    domain: 'inviewd.com',
+    category: 'Real Estate · Experiencias 3D',
+    location: 'Bucaramanga, CO',
+    tagline: 'Salas de ventas virtuales que cierran negocios.',
+    description:
+      'Sitio corporativo para un estudio de recorridos 3D inmobiliarios. Una narrativa editorial que lleva al comprador desde la inspiración hasta agendar una demostración.',
+    highlights: [
+      'Sitio bilingüe ES / EN',
+      'Menús de soluciones, guías y casos',
+      'CTA de demo y recorrido en primer plano',
+    ],
+    tags: ['Sitio corporativo', 'Bilingüe', 'SEO', 'Real Estate'],
+    chips: ['ES / EN', 'Agenda una demo'],
+    accent: '#3ecf8e',
+    accent2: '#7b4cb3',
+    image: '/images/proyectos/inviewd.webp',
+    imageSm: '/images/proyectos/inviewd-sm.webp',
+  },
+  {
+    slug: 'punta-diamante',
+    name: 'Hotel Punta Diamante',
+    url: 'https://puntadiamantehotel.com',
+    domain: 'puntadiamantehotel.com',
+    category: 'Hotelería premium',
+    location: 'Ruitoque · Bucaramanga, CO',
+    tagline: 'Descubra Santander desde el mejor lugar.',
+    description:
+      'Experiencia digital para un hotel premium: habitaciones, eventos, spa y gastronomía en un solo destino, con un camino directo a la reserva.',
+    highlights: [
+      'Habitaciones, eventos, Aqua Spa y gastronomía',
+      'Botón de reserva siempre visible',
+      'Contacto inmediato por WhatsApp',
+    ],
+    tags: ['Hotelería', 'Reservas', 'Eventos', 'WhatsApp'],
+    chips: ['Reservar ahora', 'Aqua Spa'],
+    accent: '#d4a95f',
+    accent2: '#1f8f7a',
+    image: '/images/proyectos/punta-diamante.webp',
+    imageSm: '/images/proyectos/punta-diamante-sm.webp',
+  },
+  {
+    slug: 'construsuenos',
+    name: 'ConstruSueños',
+    url: 'https://xn--construsueoshm-znb.com/',
+    domain: 'construsueños.com',
+    category: 'Construcción en madera',
+    location: 'Cartagena y el Caribe, CO',
+    tagline: 'Madera de primera, calidad impregnada.',
+    description:
+      'Landing de captación para una empresa de construcciones en madera inmunizada: cabañas, kioscos, decks y pérgolas, con la cotización a un clic.',
+    highlights: [
+      'Cotización gratuita como acción principal',
+      'Modo claro / oscuro y versión en inglés',
+      'Galería de proyectos y proceso paso a paso',
+    ],
+    tags: ['Landing', 'Cotizador', 'Dark mode', 'Bilingüe'],
+    chips: ['Cotiza gratis', 'Modo oscuro'],
+    accent: '#f0a020',
+    accent2: '#5b8c2a',
+    image: '/images/proyectos/construsuenos.webp',
+    imageSm: '/images/proyectos/construsuenos-sm.webp',
+  },
+];
+
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<section id="proyectos" class="pf" aria-labelledby="pf-heading">
+  <div aria-hidden="true" class="pf-glow"></div>
+
+  <div class="container-lixan relative z-10">
+
+    <!-- ── Header ── -->
+    <div class="pf-head">
+      <div data-animate>
+        <span class="eyebrow">
+          <span class="eyebrow-dot"></span>
+          Portafolio · Proyectos en producción
+        </span>
+        <h2 id="pf-heading" class="pf-title">
+          Sitios que ya están <span class="pf-title-accent">trabajando</span> para sus dueños
+        </h2>
+        <p class="pf-sub">
+          No son maquetas: son marcas reales que hoy venden, reservan y cotizan desde su sitio web.
+        </p>
+      </div>
+
+      <div class="pf-counter" data-animate="right" aria-hidden="true">
+        <span class="pf-counter-num" data-count={projects.length} data-count-pad="2">00</span>
+        <span class="pf-counter-label">proyectos<br />lanzados</span>
+      </div>
+    </div>
+
+    <!-- ── Sticky stack ── -->
+    <ol class="pf-stack" role="list">
+      {projects.map((p, i) => (
+        <li
+          class="pf-item"
+          style={`--i:${i}; --acc:${p.accent}; --acc2:${p.accent2};`}
+        >
+          <article class="pf-card" aria-labelledby={`pf-${p.slug}`}>
+            <div class="pf-card-bg" aria-hidden="true"></div>
+
+            <!-- Info -->
+            <div class="pf-info">
+              <div class="pf-meta">
+                <span class="pf-index">{pad(i + 1)}</span>
+                <span class="pf-line" aria-hidden="true"></span>
+                <span class="pf-cat">{p.category}</span>
+              </div>
+
+              <h3 id={`pf-${p.slug}`} class="pf-name">{p.name}</h3>
+              <p class="pf-tagline">“{p.tagline}”</p>
+              <p class="pf-desc">{p.description}</p>
+
+              <ul class="pf-highlights">
+                {p.highlights.map((h) => (
+                  <li>
+                    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                    {h}
+                  </li>
+                ))}
+              </ul>
+
+              <div class="pf-tags">
+                {p.tags.map((t) => <span class="pf-tag">{t}</span>)}
+              </div>
+
+              <div class="pf-actions">
+                <a
+                  href={p.url}
+                  target="_blank"
+                  rel="noopener"
+                  class="pf-visit"
+                  data-magnetic
+                  aria-label={`Visitar el sitio de ${p.name} (abre en una pestaña nueva)`}
+                >
+                  Visitar sitio
+                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path d="M6.5 4.75a.75.75 0 000 1.5h6.19L4.97 13.97a.75.75 0 101.06 1.06l7.72-7.72v6.19a.75.75 0 001.5 0v-8a.75.75 0 00-.75-.75h-8z" />
+                  </svg>
+                </a>
+                <span class="pf-location">
+                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 103 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 002.273 1.765 11.842 11.842 0 00.976.544l.062.029.018.008.006.003zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" clip-rule="evenodd" />
+                  </svg>
+                  {p.location}
+                </span>
+              </div>
+            </div>
+
+            <!-- Browser mockup -->
+            <a
+              href={p.url}
+              target="_blank"
+              rel="noopener"
+              class="pf-shot"
+              tabindex="-1"
+              aria-hidden="true"
+             
+            >
+              <div class="pf-browser">
+                <div class="pf-browser-bar">
+                  <span class="pf-dots"><i></i><i></i><i></i></span>
+                  <span class="pf-url">
+                    <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" /></svg>
+                    {p.domain}
+                  </span>
+                  <span class="pf-live"><i></i>Live</span>
+                </div>
+                <div class="pf-screen">
+                  <img
+                    src={p.image}
+                    srcset={`${p.imageSm} 800w, ${p.image} 1600w`}
+                    sizes="(min-width: 1024px) 640px, 92vw"
+                    alt={`Página de inicio de ${p.name}`}
+                    width="1600"
+                    height="768"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <span class="pf-shine"></span>
+                </div>
+              </div>
+
+              <span class="pf-chip pf-chip-a">{p.chips[0]}</span>
+              <span class="pf-chip pf-chip-b">{p.chips[1]}</span>
+
+              <span class="pf-cursor">Visitar ↗</span>
+            </a>
+          </article>
+        </li>
+      ))}
+    </ol>
+
+    <!-- ── Closing CTA ── -->
+    <div class="pf-next" data-animate>
+      <p>¿El próximo proyecto en esta lista?</p>
+      <a href="#contacto" class="pf-next-btn" data-magnetic>
+        Que sea el tuyo
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pf {
+    position: relative;
+    padding-block: 7rem 6rem;
+  }
+
+  .pf-glow {
+    position: absolute;
+    inset: 10% -10% auto;
+    height: 60%;
+    pointer-events: none;
+    background:
+      radial-gradient(40% 50% at 20% 30%, rgba(123, 76, 179, 0.18), transparent 70%),
+      radial-gradient(35% 40% at 85% 60%, rgba(62, 207, 142, 0.08), transparent 70%);
+    filter: blur(20px);
+  }
+
+  /* ── Header ─────────────────────────────────────────────── */
+  .pf-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 4rem;
+  }
+
+  .pf-title {
+    font-size: clamp(2.1rem, 5vw, 3.75rem);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+    max-width: 14ch;
+    margin: 1rem 0 1.25rem;
+  }
+
+  .pf-title-accent {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    background: linear-gradient(120deg, #c9a8f0, #a87dd1 40%, #9aad1a);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    padding-right: 0.08em;
+  }
+
+  .pf-sub {
+    color: var(--color-text-secondary);
+    font-size: 1.0625rem;
+    max-width: 46ch;
+  }
+
+  .pf-counter {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
+  }
+
+  .pf-counter-num {
+    font-size: clamp(4rem, 9vw, 7.5rem);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.06em;
+    font-variant-numeric: tabular-nums;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(168, 125, 209, 0.7);
+  }
+
+  .pf-counter-label {
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 767px) {
+    .pf-head { flex-direction: column; align-items: flex-start; margin-bottom: 2.5rem; }
+    .pf-counter { display: none; }
+  }
+
+  /* ── Stack ──────────────────────────────────────────────── */
+  .pf-stack {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .pf-item {
+    --p: 0;
+    position: relative;
+  }
+
+  /* Sticky stacking solo cuando hay espacio vertical suficiente */
+  @media (min-width: 1024px) and (min-height: 700px) {
+    .pf-stack { gap: 14vh; }
+    .pf-item {
+      position: sticky;
+      top: calc(96px + var(--i) * 22px);
+    }
+    .pf-card {
+      transform: scale(calc(1 - var(--p) * 0.06));
+      filter: brightness(calc(1 - var(--p) * 0.45)) saturate(calc(1 - var(--p) * 0.3));
+      transform-origin: 50% 0%;
+      will-change: transform, filter;
+    }
+  }
+
+  /* ── Card ───────────────────────────────────────────────── */
+  .pf-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 3rem;
+    align-items: center;
+    padding: 3rem;
+    border-radius: 2rem;
+    border: 1px solid color-mix(in srgb, var(--acc) 22%, transparent);
+    background: #0d0b16;
+    overflow: hidden;
+    box-shadow:
+      0 30px 80px -30px rgba(0, 0, 0, 0.8),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .pf-card-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(60% 80% at 100% 0%, color-mix(in srgb, var(--acc) 20%, transparent), transparent 70%),
+      radial-gradient(50% 70% at 0% 100%, color-mix(in srgb, var(--acc2) 18%, transparent), transparent 70%);
+  }
+
+  .pf-card-bg::after {
+    /* Rejilla sutil */
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(70% 70% at 70% 40%, #000, transparent);
+  }
+
+  @media (max-width: 1023px) {
+    .pf-card {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      padding: 1.75rem;
+      border-radius: 1.5rem;
+    }
+    .pf-shot { order: -1; }
+  }
+
+  @media (max-width: 479px) {
+    .pf-card { padding: 1.25rem; }
+  }
+
+  /* ── Info ───────────────────────────────────────────────── */
+  .pf-info { position: relative; z-index: 1; min-width: 0; }
+
+  .pf-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .pf-index {
+    font-size: 0.875rem;
+    font-weight: 800;
+    color: var(--acc);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .pf-line {
+    width: 2.5rem;
+    height: 1px;
+    background: linear-gradient(90deg, var(--acc), transparent);
+  }
+
+  .pf-cat {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-text-secondary);
+  }
+
+  .pf-name {
+    font-size: clamp(1.875rem, 3.4vw, 2.75rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin-bottom: 0.75rem;
+  }
+
+  .pf-tagline {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.125rem;
+    color: color-mix(in srgb, var(--acc) 75%, white);
+    margin-bottom: 1rem;
+  }
+
+  .pf-desc {
+    color: var(--color-text-secondary);
+    font-size: 0.9625rem;
+    line-height: 1.7;
+    margin-bottom: 1.25rem;
+  }
+
+  .pf-highlights {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .pf-highlights li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.875rem;
+    color: #d9d2f0;
+  }
+
+  .pf-highlights svg {
+    width: 1rem;
+    height: 1rem;
+    margin-top: 0.2rem;
+    flex-shrink: 0;
+    color: var(--acc);
+  }
+
+  .pf-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .pf-tag {
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.35rem 0.8rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--color-text-secondary);
+  }
+
+  .pf-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem 1.25rem;
+  }
+
+  .pf-visit {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.4rem;
+    border-radius: 9999px;
+    background: var(--acc);
+    color: #0b0912;
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: 0 10px 30px -8px color-mix(in srgb, var(--acc) 60%, transparent);
+    transition: box-shadow 300ms ease, background-color 300ms ease;
+  }
+
+  .pf-visit svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .pf-visit:hover { box-shadow: 0 16px 40px -8px color-mix(in srgb, var(--acc) 80%, transparent); }
+  .pf-visit:hover svg { transform: translate(2px, -2px) rotate(0deg) scale(1.1); }
+
+  .pf-location {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+  }
+
+  .pf-location svg { width: 0.9rem; height: 0.9rem; }
+
+  /* ── Browser mockup ─────────────────────────────────────── */
+  .pf-shot {
+    position: relative;
+    z-index: 1;
+    display: block;
+    min-width: 0;
+    perspective: 1200px;
+    cursor: none;
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    .pf-shot { cursor: pointer; }
+  }
+
+  .pf-browser {
+    position: relative;
+    border-radius: 0.9rem;
+    overflow: hidden;
+    background: #14121d;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+      0 40px 80px -30px rgba(0, 0, 0, 0.9),
+      0 0 0 1px rgba(0, 0, 0, 0.4),
+      0 0 60px -20px color-mix(in srgb, var(--acc) 50%, transparent);
+    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+    transform-style: preserve-3d;
+  }
+
+  .pf-browser-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.9rem;
+    background: #1a1726;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .pf-dots { display: flex; gap: 0.35rem; flex-shrink: 0; }
+  .pf-dots i {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background: #3a3550;
+  }
+  .pf-dots i:nth-child(1) { background: #ff5f57; }
+  .pf-dots i:nth-child(2) { background: #febc2e; }
+  .pf-dots i:nth-child(3) { background: #28c840; }
+
+  .pf-url {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pf-url svg { width: 0.7rem; height: 0.7rem; color: #28c840; flex-shrink: 0; }
+
+  .pf-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #28c840;
+    flex-shrink: 0;
+  }
+
+  .pf-live i {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background: currentColor;
+    animation: pf-pulse 2s ease-out infinite;
+  }
+
+  @keyframes pf-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(40, 200, 64, 0.6); }
+    70%  { box-shadow: 0 0 0 6px rgba(40, 200, 64, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(40, 200, 64, 0); }
+  }
+
+  @media (max-width: 479px) { .pf-live { display: none; } }
+
+  .pf-screen {
+    position: relative;
+    aspect-ratio: 1600 / 768;
+    overflow: hidden;
+  }
+
+  .pf-screen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    transform: scale(1.02);
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .pf-shot:hover .pf-screen img { transform: scale(1.07); }
+
+  /* Reflejo que barre la pantalla al hacer hover */
+  .pf-shine {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.16) 50%, transparent 65%);
+    transform: translateX(-120%);
+    pointer-events: none;
+  }
+
+  .pf-shot:hover .pf-shine {
+    transform: translateX(120%);
+    transition: transform 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* ── Floating chips ─────────────────────────────────────── */
+  .pf-chip {
+    position: absolute;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.9rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fff;
+    background: rgba(20, 17, 30, 0.72);
+    border: 1px solid color-mix(in srgb, var(--acc) 45%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.7);
+    white-space: nowrap;
+    animation: pf-float 6s ease-in-out infinite;
+  }
+
+  .pf-chip::before {
+    content: '';
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: var(--acc);
+    box-shadow: 0 0 10px var(--acc);
+  }
+
+  .pf-chip-a { top: 18%; left: -1.25rem; }
+  .pf-chip-b { bottom: -0.9rem; right: 1.5rem; animation-delay: -3s; }
+
+  @keyframes pf-float {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50%      { transform: translate3d(0, -10px, 0); }
+  }
+
+  @media (max-width: 1023px) {
+    .pf-chip-a { left: 0.75rem; top: auto; bottom: -0.9rem; }
+    .pf-chip-b { right: 0.75rem; }
+  }
+
+  @media (max-width: 479px) {
+    .pf-chip-b { display: none; }
+  }
+
+  /* ── Cursor bubble ──────────────────────────────────────── */
+  .pf-cursor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    width: 6rem;
+    height: 6rem;
+    border-radius: 50%;
+    background: var(--acc);
+    color: #0b0912;
+    font-weight: 700;
+    font-size: 0.875rem;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate3d(var(--cx, 50%), var(--cy, 50%), 0) translate(-50%, -50%) scale(0.3);
+    transition: opacity 250ms ease, transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .pf-shot.is-hover .pf-cursor {
+    opacity: 1;
+    transform: translate3d(var(--cx, 50%), var(--cy, 50%), 0) translate(-50%, -50%) scale(1);
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    .pf-cursor { display: none; }
+  }
+
+  /* ── Closing CTA ────────────────────────────────────────── */
+  .pf-next {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
+    margin-top: 5rem;
+    text-align: center;
+  }
+
+  .pf-next p {
+    font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .pf-next-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.6rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(168, 125, 209, 0.5);
+    font-weight: 600;
+    transition: background-color 300ms ease, border-color 300ms ease;
+  }
+
+  .pf-next-btn:hover {
+    background: rgba(123, 76, 179, 0.18);
+    border-color: #a87dd1;
+  }
+
+  .pf-next-btn span { transition: transform 300ms ease; }
+  .pf-next-btn:hover span { transform: translateX(4px); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pf-chip, .pf-live i { animation: none; }
+    .pf-card { transform: none !important; filter: none !important; }
+  }
+</style>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const items = Array.from(document.querySelectorAll<HTMLElement>('.pf-item'));
+
+  // ── Stack: escala/oscurece la tarjeta cuando la siguiente se le apila encima ──
+  const stackMq = window.matchMedia('(min-width: 1024px) and (min-height: 700px)');
+  let ticking = false;
+
+  function updateStack() {
+    ticking = false;
+    if (!stackMq.matches || reduce) {
+      items.forEach((it) => it.style.setProperty('--p', '0'));
+      return;
+    }
+    for (let i = 0; i < items.length; i++) {
+      const next = items[i + 1];
+      if (!next) { items[i].style.setProperty('--p', '0'); continue; }
+      const a = items[i].getBoundingClientRect();
+      const b = next.getBoundingClientRect();
+      const dist = b.top - a.top - 22;
+      const p = Math.min(1, Math.max(0, 1 - dist / a.height));
+      // Las tarjetas más atrás se hunden un poco más
+      const depth = items.length - 1 - i;
+      items[i].style.setProperty('--p', (p * (0.6 + 0.4 * depth / Math.max(1, items.length - 1))).toFixed(3));
+    }
+  }
+
+  function onScroll() {
+    if (!ticking) { ticking = true; requestAnimationFrame(updateStack); }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  updateStack();
+
+  // ── Mockup: tilt 3D + burbuja que sigue el cursor ──
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (finePointer && !reduce) {
+    document.querySelectorAll<HTMLElement>('.pf-shot').forEach((shot) => {
+      const browser = shot.querySelector<HTMLElement>('.pf-browser');
+      shot.addEventListener('pointerenter', () => shot.classList.add('is-hover'));
+      shot.addEventListener('pointerleave', () => {
+        shot.classList.remove('is-hover');
+        browser?.style.setProperty('--rx', '0deg');
+        browser?.style.setProperty('--ry', '0deg');
+      });
+      shot.addEventListener('pointermove', (e) => {
+        const r = shot.getBoundingClientRect();
+        const x = e.clientX - r.left;
+        const y = e.clientY - r.top;
+        shot.style.setProperty('--cx', `${x}px`);
+        shot.style.setProperty('--cy', `${y}px`);
+        const nx = x / r.width - 0.5;
+        const ny = y / r.height - 0.5;
+        browser?.style.setProperty('--ry', `${nx * 8}deg`);
+        browser?.style.setProperty('--rx', `${-ny * 8}deg`);
+      });
+    });
+  }
+</script>

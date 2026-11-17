@@ -62,10 +62,10 @@ function renderStars(rating: number): string {
 
     <!-- ── Section header ── -->
     <div class="text-center mb-16" data-animate>
-      <span class="inline-block text-brand-400 text-sm font-semibold uppercase tracking-widest mb-3">
+      <span class="eyebrow mb-5"><span class="eyebrow-dot"></span>
         Clientes
       </span>
-      <h2 id="testimonials-heading" class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4">
+      <h2 id="testimonials-heading" data-split class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4">
         Lo que dicen quienes <span class="gradient-text">ya trabajaron con nosotros</span>
       </h2>
     </div>
@@ -75,8 +75,9 @@ function renderStars(rating: number): string {
       {testimonials.map((t, i) => (
         <blockquote
           data-animate="scale"
+          data-spotlight
           style={`--ad: ${i * 90}ms`}
-          class="flex flex-col gap-5 p-7 rounded-brand border border-surface-700 bg-surface-900 hover:border-brand-500/40 hover:-translate-y-1 hover:shadow-[0_0_32px_rgba(109,61,247,0.22)] transition-all duration-300"
+          class="relative flex flex-col gap-5 p-7 rounded-brand border border-surface-700 bg-surface-900 hover:border-brand-500/40 hover:-translate-y-1 hover:shadow-[0_0_32px_rgba(109,61,247,0.22)] transition-all duration-300"
         >
           <!-- Stars -->
           <div class="text-brand-400 text-lg tracking-tight" aria-label={`${t.rating ?? 5} estrellas`}>
