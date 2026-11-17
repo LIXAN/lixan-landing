@@ -2,7 +2,8 @@
 /**
  * Portfolio.astro
  * ─────────────────────────────────────────────────────────────
- * Proyectos web lanzados por Lixan, presentados como un "stack"
+ * Todos los proyectos de Lixan en una sola sección: casos de Sanity
+ * (sistemas, CMS, agentes IA) + sitios web lanzados, como un "stack"
  * de tarjetas sticky: al hacer scroll cada proyecto se apila sobre
  * el anterior, que se encoge y se oscurece suavemente.
  *
@@ -12,7 +13,9 @@
  * ─────────────────────────────────────────────────────────────
  */
 
-interface Project {
+import { getAllCaseStudies, urlFor } from '../../lib/sanity';
+
+interface WebProject {
   slug: string;
   name: string;
   url: string;
@@ -24,12 +27,11 @@ interface Project {
   highlights: string[];
   tags: string[];
   accent: string;      // color principal del proyecto
-  accent2: string;     // color secundario para gradientes
   image: string;
   imageSm: string;
 }
 
-const projects: Project[] = [
+const webProjects: WebProject[] = [
   {
     slug: 'inviewd',
     name: 'Inviewd',
@@ -47,7 +49,6 @@ const projects: Project[] = [
     ],
     tags: ['Sitio corporativo', 'Bilingüe', 'SEO', 'Real Estate'],
     accent: '#3ecf8e',
-    accent2: '#7b4cb3',
     image: '/images/proyectos/inviewd.webp',
     imageSm: '/images/proyectos/inviewd-sm.webp',
   },
@@ -68,7 +69,6 @@ const projects: Project[] = [
     ],
     tags: ['Hotelería', 'Reservas', 'Eventos', 'WhatsApp'],
     accent: '#d4a95f',
-    accent2: '#1f8f7a',
     image: '/images/proyectos/punta-diamante.webp',
     imageSm: '/images/proyectos/punta-diamante-sm.webp',
   },
@@ -89,11 +89,84 @@ const projects: Project[] = [
     ],
     tags: ['Landing', 'Cotizador', 'Dark mode', 'Bilingüe'],
     accent: '#f0a020',
-    accent2: '#5b8c2a',
     image: '/images/proyectos/construsuenos.webp',
     imageSm: '/images/proyectos/construsuenos-sm.webp',
   },
 ];
+
+/** Forma común que renderiza cada tarjeta del stack */
+interface Card {
+  key: string;
+  name: string;
+  category: string;
+  client?: string;
+  location?: string;
+  tagline?: string;
+  description?: string;
+  highlights: string[];
+  tags: string[];
+  accent: string;
+  href: string;
+  external: boolean;
+  linkLabel: string;
+  barLabel: string;
+  live: boolean;
+  image?: string;
+  srcset?: string;
+  imgAlt: string;
+}
+
+const industryLabels: Record<string, string> = {
+  ecommerce: 'E-commerce', saas: 'B2B / SaaS', healthcare: 'Salud',
+  finance: 'Finanzas', realestate: 'Inmobiliaria', education: 'Educación',
+  marketing: 'Marketing', other: 'Tecnología',
+};
+
+// Casos publicados en Sanity Studio (se mantienen siempre que existan)
+let caseCards: Card[] = [];
+try {
+  const cases = (await getAllCaseStudies()).filter((c) => c.featured && c.slug?.current);
+  caseCards = cases.map((c) => ({
+    key: c._id,
+    name: c.title,
+    category: industryLabels[c.industry] ?? c.industry ?? 'Proyecto',
+    client: c.client,
+    highlights: (c.results ?? []).slice(0, 4),
+    tags: [],
+    accent: '#A87DD1',
+    href: `/casos/${c.slug.current}`,
+    external: false,
+    linkLabel: 'Ver caso completo',
+    barLabel: c.client ?? c.title,
+    live: false,
+    image: c.coverImage ? urlFor(c.coverImage).width(1400).url() : undefined,
+    imgAlt: (c.coverImage as { alt?: string } | undefined)?.alt ?? c.title,
+  }));
+} catch {
+  // Sanity no disponible: solo se muestran los sitios web
+}
+
+const webCards: Card[] = webProjects.map((p) => ({
+  key: p.slug,
+  name: p.name,
+  category: p.category,
+  location: p.location,
+  tagline: p.tagline,
+  description: p.description,
+  highlights: p.highlights,
+  tags: p.tags,
+  accent: p.accent,
+  href: p.url,
+  external: true,
+  linkLabel: 'Visitar sitio',
+  barLabel: p.domain,
+  live: true,
+  image: p.image,
+  srcset: `${p.imageSm} 800w, ${p.image} 1600w`,
+  imgAlt: `Página de inicio de ${p.name}`,
+}));
+
+const cards: Card[] = [...caseCards, ...webCards];
 
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
@@ -105,29 +178,28 @@ const pad = (n: number) => String(n).padStart(2, '0');
     <!-- ── Header ── -->
     <div class="pf-head">
       <div data-animate>
-        <span class="eyebrow">Proyectos</span>
-        <h2 id="pf-heading" class="pf-title">
+        <h2 id="pf-heading" class="pf-title" data-split>
           Lo que hemos <span class="pf-title-accent">construido</span>
         </h2>
         <p class="pf-sub">
-          Marcas reales, en producción, que hoy venden, reservan y cotizan desde su sitio web.
+          Sistemas, automatizaciones y sitios web en producción para clientes reales.
         </p>
       </div>
 
       <div class="pf-counter" data-animate="right" aria-hidden="true">
-        <span class="pf-counter-num" data-count={projects.length} data-count-pad="2">00</span>
-        <span class="pf-counter-label">proyectos<br />lanzados</span>
+        <span class="pf-counter-num" data-count={cards.length} data-count-pad="2">00</span>
+        <span class="pf-counter-label">proyectos<br />entregados</span>
       </div>
     </div>
 
     <!-- ── Sticky stack ── -->
     <ol class="pf-stack" role="list">
-      {projects.map((p, i) => (
+      {cards.map((p, i) => (
         <li
           class="pf-item"
-          style={`--i:${i}; --acc:${p.accent}; --acc2:${p.accent2};`}
+          style={`--i:${Math.min(i, 4)}; --acc:${p.accent};`}
         >
-          <article class="pf-card" aria-labelledby={`pf-${p.slug}`}>
+          <article class="pf-card" aria-labelledby={`pf-${p.key}`}>
             <div class="pf-card-bg" aria-hidden="true"></div>
 
             <!-- Info -->
@@ -138,10 +210,12 @@ const pad = (n: number) => String(n).padStart(2, '0');
                 <span class="pf-cat">{p.category}</span>
               </div>
 
-              <h3 id={`pf-${p.slug}`} class="pf-name">{p.name}</h3>
-              <p class="pf-tagline">“{p.tagline}”</p>
-              <p class="pf-desc">{p.description}</p>
+              <h3 id={`pf-${p.key}`} class="pf-name">{p.name}</h3>
+              {p.client && <p class="pf-client">{p.client}</p>}
+              {p.tagline && <p class="pf-tagline">“{p.tagline}”</p>}
+              {p.description && <p class="pf-desc">{p.description}</p>}
 
+              {p.highlights.length > 0 && (
               <ul class="pf-highlights">
                 {p.highlights.map((h) => (
                   <li>
@@ -152,69 +226,68 @@ const pad = (n: number) => String(n).padStart(2, '0');
                   </li>
                 ))}
               </ul>
+              )}
 
-              <div class="pf-tags">
-                {p.tags.map((t) => <span class="pf-tag">{t}</span>)}
-              </div>
+              {p.tags.length > 0 && (
+                <div class="pf-tags">
+                  {p.tags.map((t) => <span class="pf-tag">{t}</span>)}
+                </div>
+              )}
 
               <div class="pf-actions">
                 <a
-                  href={p.url}
-                  target="_blank"
-                  rel="noopener"
+                  href={p.href}
+                  target={p.external ? '_blank' : undefined}
+                  rel={p.external ? 'noopener' : undefined}
                   class="pf-visit"
-                  data-magnetic
-                  aria-label={`Visitar el sitio de ${p.name} (abre en una pestaña nueva)`}
+                  aria-label={p.external ? `Visitar el sitio de ${p.name} (abre en una pestaña nueva)` : `Ver el caso completo de ${p.name}`}
                 >
-                  Visitar sitio
+                  {p.linkLabel}
                   <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path d="M6.5 4.75a.75.75 0 000 1.5h6.19L4.97 13.97a.75.75 0 101.06 1.06l7.72-7.72v6.19a.75.75 0 001.5 0v-8a.75.75 0 00-.75-.75h-8z" />
                   </svg>
                 </a>
-                <span class="pf-location">
+                {p.location && <span class="pf-location">
                   <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 103 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 002.273 1.765 11.842 11.842 0 00.976.544l.062.029.018.008.006.003zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" clip-rule="evenodd" />
                   </svg>
                   {p.location}
-                </span>
+                </span>}
               </div>
             </div>
 
             <!-- Browser mockup -->
             <a
-              href={p.url}
-              target="_blank"
-              rel="noopener"
+              href={p.href}
+              target={p.external ? '_blank' : undefined}
+              rel={p.external ? 'noopener' : undefined}
               class="pf-shot"
               tabindex="-1"
               aria-hidden="true"
-             
             >
               <div class="pf-browser">
                 <div class="pf-browser-bar">
                   <span class="pf-dots"><i></i><i></i><i></i></span>
-                  <span class="pf-url">
-                    <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" /></svg>
-                    {p.domain}
-                  </span>
-                  <span class="pf-live"><i></i>Live</span>
+                  <span class="pf-url">{p.barLabel}</span>
+                  {p.live && <span class="pf-live"><i></i>Live</span>}
                 </div>
                 <div class="pf-screen">
-                  <img
-                    src={p.image}
-                    srcset={`${p.imageSm} 800w, ${p.image} 1600w`}
-                    sizes="(min-width: 1024px) 640px, 92vw"
-                    alt={`Página de inicio de ${p.name}`}
-                    width="1600"
-                    height="768"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <span class="pf-shine"></span>
+                  {p.image && (
+                    <img
+                      src={p.image}
+                      srcset={p.srcset}
+                      sizes={p.srcset ? '(min-width: 1024px) 640px, 92vw' : undefined}
+                      alt={p.imgAlt}
+                      width="1600"
+                      height="768"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  )}
                 </div>
               </div>
 
-              <span class="pf-cursor">Visitar ↗</span>
+              <span class="pf-cursor">{p.external ? 'Visitar ↗' : 'Ver caso →'}</span>
             </a>
           </article>
         </li>
@@ -224,7 +297,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     <!-- ── Closing CTA ── -->
     <div class="pf-next" data-animate>
       <p>¿El próximo proyecto en esta lista?</p>
-      <a href="#contacto" class="pf-next-btn" data-magnetic>
+      <a href="#contacto" class="pf-next-btn">
         Que sea el tuyo
         <span aria-hidden="true">→</span>
       </a>
@@ -399,11 +472,17 @@ const pad = (n: number) => String(n).padStart(2, '0');
   }
 
   .pf-name {
-    font-size: clamp(1.875rem, 3.4vw, 2.75rem);
+    font-size: clamp(1.6rem, 2.6vw, 2.25rem);
     font-weight: 800;
     letter-spacing: -0.03em;
     line-height: 1.05;
     margin-bottom: 0.75rem;
+  }
+
+  .pf-client {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    margin: -0.25rem 0 1.25rem;
   }
 
   .pf-tagline {
@@ -604,20 +683,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
   }
 
   .pf-shot:hover .pf-screen img { transform: scale(1.07); }
-
-  /* Reflejo que barre la pantalla al hacer hover */
-  .pf-shine {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.16) 50%, transparent 65%);
-    transform: translateX(-120%);
-    pointer-events: none;
-  }
-
-  .pf-shot:hover .pf-shine {
-    transform: translateX(120%);
-    transition: transform 1.1s cubic-bezier(0.16, 1, 0.3, 1);
-  }
 
   /* ── Cursor bubble ──────────────────────────────────────── */
   .pf-cursor {

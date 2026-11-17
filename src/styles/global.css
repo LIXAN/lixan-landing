@@ -218,28 +218,8 @@
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Eyebrow label (sección / kicker)
+   Cabecera de sección
    ───────────────────────────────────────────────────────────── */
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--color-text-secondary);
-}
-.eyebrow::before {
-  content: '';
-  width: 1.75rem;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.6;
-}
-.eyebrow-dot { display: none; }
-
-/* Cabecera de sección alineada a la izquierda */
 .section-head { max-width: 46rem; }
 .section-head h2 { font-size: clamp(2rem, 4.4vw, 3.4rem); line-height: 1.05; letter-spacing: -0.035em; }
 
