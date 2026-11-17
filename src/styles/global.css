@@ -31,7 +31,8 @@
   --color-border:             #2E2E2E;
 
   /* ── Display font (headlines / Navbar logo) ── */
-  --font-display: 'Mokoko VF', Georgia, serif;
+  --font-display: 'Instrument Serif', 'Mokoko VF', Georgia, serif;
+  --font-heading: 'Bricolage Grotesque', 'Inter', ui-sans-serif, system-ui, sans-serif;
 
   /* Brand colours */
   --color-brand-50:  #f0eeff;
@@ -124,8 +125,10 @@
 
   /* Heading defaults */
   h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
     font-weight: 700;
-    line-height: 1.2;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
     color: var(--color-text-primary);
   }
 
@@ -140,15 +143,13 @@
    ───────────────────────────────────────────────────────────── */
 @layer utilities {
   /* Gradient text helper */
+  /* Acento editorial: serif itálica en color sólido (antes: degradado violeta→azul) */
   .gradient-text {
-    background: linear-gradient(
-      135deg,
-      var(--color-brand-400) 0%,
-      var(--color-electric-400) 100%
-    );
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    color: #C9B3EC;
   }
 
   /* Glowing card border */
@@ -189,12 +190,10 @@
    ───────────────────────────────────────────────────────────── */
 [data-animate] {
   opacity: 0;
-  transform: translateY(32px);
-  filter: blur(6px);
+  transform: translateY(24px);
   transition:
-    opacity   0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--ad, 0ms),
-    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--ad, 0ms),
-    filter    0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--ad, 0ms),
+    opacity   0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--ad, 0ms),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--ad, 0ms),
     /* hover de tarjetas (Tailwind v4 usa la propiedad `translate`) */
     translate        0.35s cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow       0.35s ease,
@@ -216,7 +215,6 @@
 [data-animate].in-view {
   opacity: 1;
   transform: none;
-  filter: none;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -225,29 +223,25 @@
 .eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
-  padding: 0.4rem 0.9rem 0.4rem 0.7rem;
-  border-radius: 9999px;
-  border: 1px solid rgba(168, 125, 209, 0.28);
-  background: rgba(123, 76, 179, 0.08);
+  gap: 0.75rem;
   font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
+  font-weight: 500;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #cdbfff;
+  color: var(--color-text-secondary);
 }
-.eyebrow-dot {
-  width: 0.45rem;
-  height: 0.45rem;
-  border-radius: 50%;
-  background: #9AAD1A;
-  animation: eyebrow-pulse 2.2s ease-out infinite;
+.eyebrow::before {
+  content: '';
+  width: 1.75rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.6;
 }
-@keyframes eyebrow-pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(154, 173, 26, 0.55); }
-  70%  { box-shadow: 0 0 0 8px rgba(154, 173, 26, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(154, 173, 26, 0); }
-}
+.eyebrow-dot { display: none; }
+
+/* Cabecera de sección alineada a la izquierda */
+.section-head { max-width: 46rem; }
+.section-head h2 { font-size: clamp(2rem, 4.4vw, 3.4rem); line-height: 1.05; letter-spacing: -0.035em; }
 
 /* ─────────────────────────────────────────────────────────────
    Split headline (Motion.astro envuelve cada palabra)
@@ -272,37 +266,7 @@
   transform: none;
   opacity: 1;
 }
-/* background-clip:text no atraviesa hijos transformados → gradiente por palabra */
-.is-split .gradient-text { background: none; }
-.is-split .gradient-text .split-i {
-  background: linear-gradient(135deg, var(--color-brand-400) 0%, var(--color-electric-400) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
 
-/* ─────────────────────────────────────────────────────────────
-   Spotlight cards — luz radial que sigue al cursor
-   ───────────────────────────────────────────────────────────── */
-[data-spotlight] {
-  isolation: isolate;
-}
-[data-spotlight]::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 400ms ease;
-  background: radial-gradient(
-    420px circle at var(--mx, 50%) var(--my, 50%),
-    rgba(133, 93, 255, 0.16),
-    transparent 45%
-  );
-}
-[data-spotlight]:hover::before { opacity: 1; }
 
 /* ─────────────────────────────────────────────────────────────
    Marquee infinito
@@ -344,8 +308,7 @@
   height: 100%;
   transform: scaleX(0);
   transform-origin: 0 50%;
-  background: linear-gradient(90deg, #7B4CB3, #A87DD1 50%, #9AAD1A);
-  box-shadow: 0 0 12px rgba(168, 125, 209, 0.6);
+  background: #A87DD1;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -353,9 +316,8 @@
   [data-animate] {
     opacity: 1;
     transform: none;
-    filter: none;
     transition: none;
   }
   .split-i { transform: none; opacity: 1; transition: none; }
-  .marquee-track, .eyebrow-dot { animation: none; }
+  .marquee-track { animation: none; }
 }

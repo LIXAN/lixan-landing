@@ -2,7 +2,7 @@
 /**
  * index.astro — Homepage / Landing Page
  * Conversion-optimized section order:
- *   Navbar → Hero → Portfolio → Services → HowItWorks → CaseStudies → Testimonials → FAQ → ContactForm → Footer
+ *   Navbar → Hero → Portfolio → Services → HowItWorks → Testimonials → FAQ → ContactForm → Footer
  */
 // SSR mode: fetches fresh Sanity data on every request.
 // Content changes in Studio appear immediately — no rebuild needed.
@@ -17,7 +17,6 @@ import Hero from '../components/sections/Hero.astro';
 import Portfolio from '../components/sections/Portfolio.astro';
 import Services from '../components/sections/Services.astro';
 import HowItWorks from '../components/sections/HowItWorks.astro';
-import CaseStudies from '../components/sections/CaseStudies.astro';
 import Testimonials from '../components/sections/Testimonials.astro';
 import FAQ from '../components/sections/FAQ.astro';
 
@@ -48,9 +47,6 @@ import ContactForm from '../components/sections/ContactForm';
     <!-- ─── 3. How It Works — Reduce fricción al explicar el proceso ─── -->
     <HowItWorks />
 
-    <!-- ─── 4. Case Studies — Prueba social con resultados reales ─── -->
-    <CaseStudies />
-
     <!-- ─── 5. Testimonials — Confianza adicional antes del CTA final ─── -->
     <Testimonials />
 
@@ -59,16 +55,12 @@ import ContactForm from '../components/sections/ContactForm';
 
     <!-- ─── 7. Contact Form — CTA final de conversión ─── -->
     <section id="contacto" class="py-24 md:py-32 relative" aria-labelledby="contact-heading">
-      <!-- Background glow -->
-      <div aria-hidden="true" class="pointer-events-none absolute inset-0">
-        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[400px] rounded-full bg-brand-500/15 blur-[100px]"></div>
-      </div>
 
       <div class="container-lixan relative z-10">
         <div class="max-w-xl mx-auto">
           <!-- Header -->
           <div class="text-center mb-10">
-            <span class="eyebrow mb-5"><span class="eyebrow-dot"></span>
+            <span class="eyebrow mb-5">
               Contacto
             </span>
             <h2 id="contact-heading" data-split class="text-3xl sm:text-4xl font-extrabold mb-4">

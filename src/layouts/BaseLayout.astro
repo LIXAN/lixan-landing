@@ -157,20 +157,17 @@ const articleSchema = isArticle ? {
     <link
       rel="preload"
       as="style"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap"
       onload="this.onload=null;this.rel='stylesheet'"
     />
     <noscript>
       <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap"
         rel="stylesheet"
       />
     </noscript>
     <!-- Preload critical assets -->
     <link rel="preload" as="image" href="/images/LixanLogo.svg" type="image/svg+xml" />
-    <!-- Preload hero background (desktop — main LCP image) -->
-    <link rel="preload" as="image" href="/images/BG_desktop.jpg" media="(min-width: 768px)" />
-    <link rel="preload" as="image" href="/images/BG_mobile.jpg"  media="(max-width: 767px)" />
 
     <!-- ── JSON-LD Structured Data ── -->
     <script type="application/ld+json" set:html={JSON.stringify(orgSchema)} />

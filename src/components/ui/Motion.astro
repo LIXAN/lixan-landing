@@ -8,7 +8,6 @@
  *  · [data-split]     → titulares que se revelan palabra por palabra
  *  · [data-count]     → contadores que suben al entrar en pantalla
  *  · [data-magnetic]  → botones que se "pegan" al cursor
- *  · [data-spotlight] → tarjetas con luz que sigue al cursor
  *
  * Respeta prefers-reduced-motion y desactiva efectos de puntero
  * en pantallas táctiles.
@@ -126,14 +125,6 @@
         kick();
       });
       el.addEventListener('pointerleave', () => { tx = 0; ty = 0; kick(); });
-    });
-
-    document.querySelectorAll<HTMLElement>('[data-spotlight]').forEach((el) => {
-      el.addEventListener('pointermove', (e) => {
-        const r = el.getBoundingClientRect();
-        el.style.setProperty('--mx', `${e.clientX - r.left}px`);
-        el.style.setProperty('--my', `${e.clientY - r.top}px`);
-      });
     });
   }
 </script>

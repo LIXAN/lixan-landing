@@ -9,7 +9,7 @@
  *  - Scrolled (> 40px) → .is-scrolled class adds frosted-glass blur.
  *
  * Layout  left | center | right:
- *  Logo  "Li[x]am"   |   Servicios · Casos · Proceso · Contacto   |   CTA
+ *  Logo  "Li[x]am"   |   Proyectos · Servicios · Proceso · Contacto   |   CTA
  *
  * Mobile: nav links collapse behind hamburger button.
  * ─────────────────────────────────────────────────────────────
@@ -20,7 +20,6 @@ const navLinks = [
   { label: 'Proyectos', href: '#proyectos' },
   { label: 'Servicios', href: '#servicios' },
   { label: 'Proceso',   href: '#proceso'   },
-  { label: 'Casos',     href: '#casos'     },
   { label: 'Contacto',  href: '#contacto'  },
 ];
 ---
@@ -237,8 +236,8 @@ const navLinks = [
     width: var(--w, 0px);
     transform: translate(var(--x, 0px), -50%);
     border-radius: 9999px;
-    background: rgba(123, 76, 179, 0.22);
-    border: 1px solid rgba(168, 125, 209, 0.28);
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     opacity: var(--o, 0);
     pointer-events: none;
     transition:
@@ -260,7 +259,7 @@ const navLinks = [
     display: inline-flex;
     align-items: center;
     padding: 0.5rem 1.25rem;
-    border: 1px solid #7B4CB3; /* --color-lixan-purple */
+    border: 1px solid rgba(255, 255, 255, 0.22);
     border-radius: 9999px;
     font-size: 0.875rem;
     font-weight: 500;
@@ -273,9 +272,9 @@ const navLinks = [
   }
 
   .navbar-cta:hover {
-    background-color: rgba(123, 76, 179, 0.25);
-    box-shadow: 0 0 20px rgba(123, 76, 179, 0.3);
-    border-color: #A87DD1;
+    background-color: rgba(255, 255, 255, 0.06);
+    box-shadow: none;
+    border-color: rgba(255, 255, 255, 0.5);
   }
 
   /* ── Hamburger button (mobile only) ─────────────────────── */
